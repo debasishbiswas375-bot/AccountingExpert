@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Dashboard</h1>
+{% if user %}
+<p>Logged In User</p>
+{% else %}
+<p>Guest View</p>
+{% endif %}
+{% endblock %}
