@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AccountingExpert v2</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="sidebar">
+    <img src="/static/images/logo.png" class="logo">
+    <a href="/">Home</a>
+
+    {% if request.session.get("user") %}
+        <a href="/logout">Logout</a>
+    {% else %}
+        <a href="/auth">Login / Register</a>
+    {% endif %}
+</div>
+
+<div class="main">
+    {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>
