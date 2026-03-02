@@ -9,17 +9,12 @@
 
 <body>
 
-<!-- Loader -->
-<div class="loader" id="loader">
-    <div class="loader-circle"></div>
-</div>
-
 <!-- TOPBAR -->
 <div class="topbar">
 
-    <!-- Left -->
     <div class="left-section">
-        <!-- Hamburger -->
+
+        <!-- Toggle Button -->
         <button class="hamburger" onclick="toggleSidebar()">
             <span></span>
             <span></span>
@@ -31,35 +26,11 @@
         <span class="plan-badge">Free Plan</span>
     </div>
 
-    <!-- Right -->
     <div class="top-right">
-
-        <div class="notification" onclick="toggleNotifications()">
-            <i data-lucide="bell"></i>
-            <span class="notif-dot"></span>
-
-            <div class="notification-panel" id="notificationPanel">
-                <div class="notif-item">New user registered</div>
-                <div class="notif-item">Plan upgraded</div>
-                <div class="notif-item">Backup completed</div>
-            </div>
-        </div>
-
-        <div class="user-profile" onclick="toggleProfile()">
-            <div class="avatar">D</div>
-
-            <div class="profile-dropdown" id="profileDropdown">
-                <a href="#">Profile</a>
-                <a href="#">Settings</a>
-                <a href="#">Logout</a>
-            </div>
-        </div>
-
+        <div class="avatar">D</div>
     </div>
-</div>
 
-<!-- Overlay -->
-<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+</div>
 
 <!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
@@ -88,27 +59,22 @@
 
 <!-- MAIN -->
 <div class="main">
-    {% block content %}{% endblock %}
+    <h1>Dashboard</h1>
+    <p>Welcome to Accounting Expert Enterprise UI</p>
 </div>
 
 <script>
 
 function toggleSidebar() {
-    document.getElementById("sidebar").classList.toggle("show");
-    document.getElementById("overlay").classList.toggle("show");
-}
 
-function toggleProfile() {
-    document.getElementById("profileDropdown").classList.toggle("show-profile");
-}
+    const sidebar = document.getElementById("sidebar");
 
-function toggleNotifications() {
-    document.getElementById("notificationPanel").classList.toggle("show-notifications");
+    if (window.innerWidth <= 900) {
+        sidebar.classList.toggle("mobile-expanded");
+    } else {
+        sidebar.classList.toggle("mini");
+    }
 }
-
-window.addEventListener("load", function() {
-    document.getElementById("loader").classList.add("hidden");
-});
 
 lucide.createIcons();
 
