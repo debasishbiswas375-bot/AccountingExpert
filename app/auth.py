@@ -1,4 +1,4 @@
-﻿from passlib.context import CryptContext
+from passlib.context import CryptContext
 import jwt
 import os
 from datetime import datetime, timedelta
@@ -12,14 +12,20 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 
 def get_password_hash(password: str):
-    return pwd_context.hash(password[:72])
+    if not password:
+        raise ValueError("Password cannot be empty")
+
+    password = str(password)
+    password = password.encode("utf-8")[:72].decode("utf-8", errors="ignore")
+
+    return pwd_context.hash(password)
 
 def verify_password(plain, hashed):
-    return pwd_context.verify(plain[:72], hashed)
+    plain = str(plain).encode("utf-8")[:72].decode("utf-8", errors="ignore")
+    return pwd_context.verify(plain, hashed)
 
 def create_access_token(data: dict):
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(days=1)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-
