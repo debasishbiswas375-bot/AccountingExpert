@@ -1,9 +1,10 @@
-﻿body {
-font-family: -apple-system, sans-serif;
-background: #f8fafc;
-margin: 0;
-padding: 20px;
+body {
+    margin: 0;
+    font-family: Arial;
+    background: linear-gradient(135deg, #1f4e79, #2e8b8b);
+    color: white;
 }
-nav a {
-margin-right: 15px;
+
+.container {
+    padding: 50px;
 }
