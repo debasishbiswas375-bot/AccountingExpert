@@ -1,19 +1,35 @@
+from passlib.context import CryptContext
+import jwt
 import os
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-if not DATABASE_URL:
-    raise ValueError("DATABASE_URL is not set")
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = "HS256"
 
-engine = create_engine(
-    DATABASE_URL,
-    connect_args={"sslmode": "require"}
-)
+if not SECRET_KEY:
+    raise Exception("SECRET_KEY not set")
 
-SessionLocal = sessionmaker(bind=engine)
-Base = declarative_base()
+def get_password_hash(password: str):
+    if not password:
+        raise ValueError("Password cannot be empty")
+
+    password = str(password)
+    password = password.encode("utf-8")[:72].decode("utf-8", errors="ignore")
+
+    return pwd_context.hash(password)
+
+def verify_password(plain, hashed):
+    plain = str(plain)
+    plain = plain.encode("utf-8")[:72].decode("utf-8", errors="ignore")
+    return pwd_context.verify(plain, hashed)
+
+def create_access_token(data: dict):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(days=1)
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
