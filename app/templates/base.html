@@ -2,12 +2,20 @@
 <html>
 <head>
     <title>Accounting Expert</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="stylesheet" href="/static/style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
+
 <body>
 
-<!-- TOPBAR -->
+<!-- Loader -->
+<div class="loader" id="loader">
+    <div class="loader-circle"></div>
+</div>
+
+<!-- Topbar -->
 <div class="topbar">
 
     <div class="logo-area">
@@ -30,7 +38,7 @@
             </div>
         </div>
 
-        <!-- User Profile -->
+        <!-- User -->
         <div class="user-profile" onclick="toggleProfile()">
             <div class="avatar">D</div>
 
@@ -43,7 +51,7 @@
             </div>
 
             <div class="profile-dropdown" id="profileDropdown">
-                <a href="#">My Profile</a>
+                <a href="#">Profile</a>
                 <a href="#">Settings</a>
                 <a href="#">Logout</a>
             </div>
@@ -52,7 +60,7 @@
     </div>
 </div>
 
-<!-- SIDEBAR -->
+<!-- Sidebar -->
 <div class="sidebar" id="sidebar">
 
     <div class="sidebar-header">
@@ -84,25 +92,31 @@
 
 </div>
 
-<!-- MAIN CONTENT -->
+<!-- Main Content -->
 <div class="main">
     {% block content %}{% endblock %}
 </div>
 
 <script>
-function toggleProfile() {
-    document.getElementById("profileDropdown").classList.toggle("show-profile");
-}
 
 function toggleSidebar() {
     document.getElementById("sidebar").classList.toggle("collapsed");
+}
+
+function toggleProfile() {
+    document.getElementById("profileDropdown").classList.toggle("show-profile");
 }
 
 function toggleNotifications() {
     document.getElementById("notificationPanel").classList.toggle("show-notifications");
 }
 
+window.addEventListener("load", function() {
+    document.getElementById("loader").classList.add("hidden");
+});
+
 lucide.createIcons();
+
 </script>
 
 </body>
