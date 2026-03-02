@@ -1,68 +1,82 @@
+/* =========================
+   ENTERPRISE SKY BLUE THEME
+========================= */
+
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
-    background: #f4f6f9;
+    background: linear-gradient(135deg, #cfe9ff, #e6f4ff);
     position: relative;
 }
 
-/* Grayscale logo background */
+/* Grayscale Logo Watermark */
 body::before {
     content: "";
     position: fixed;
     inset: 0;
     background-image: url("/static/logo.png");
     background-repeat: repeat;
-    background-size: 180px;
-    opacity: 0.035;
+    background-size: 220px;
+    opacity: 0.06;
     filter: grayscale(100%);
     pointer-events: none;
     z-index: -1;
 }
 
-/* Topbar */
+/* ================= TOPBAR ================= */
+
 .topbar {
-    height: 75px;
-    background: white;
+    height: 80px;
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(10px);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 40px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    padding: 0 50px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.05);
 }
 
 .logo-area {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
 }
 
 .logo-img {
-    height: 45px;
+    height: 50px;
 }
 
 .logo-text {
     font-weight: 600;
+    font-size: 18px;
+    color: #1e3a5f;
 }
 
 .plan-badge {
-    background: #e6f0ff;
-    color: #4285F4;
-    padding: 4px 10px;
-    border-radius: 12px;
+    background: linear-gradient(135deg, #4fa3ff, #2d7eff);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 15px;
     font-size: 12px;
 }
 
-/* Right side */
+/* ================= USER ================= */
+
 .top-right {
     display: flex;
     align-items: center;
     gap: 25px;
 }
 
-/* Notification */
 .notification {
     position: relative;
     cursor: pointer;
+}
+
+.notification svg {
+    width: 22px;
+    height: 22px;
+    color: #1e3a5f;
 }
 
 .notif-dot {
@@ -75,20 +89,45 @@ body::before {
     border-radius: 50%;
 }
 
-/* User */
+.notification-panel {
+    position: absolute;
+    top: 35px;
+    right: -20px;
+    width: 240px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+    padding: 15px;
+    display: none;
+}
+
+.notification-panel.show-notifications {
+    display: block;
+}
+
+.notif-item {
+    padding: 10px;
+    border-radius: 12px;
+    font-size: 13px;
+}
+
+.notif-item:hover {
+    background: #f2f6ff;
+}
+
 .user-profile {
     position: relative;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
     cursor: pointer;
 }
 
 .avatar {
-    width: 45px;
-    height: 45px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #4285F4, #5b9cff);
+    background: linear-gradient(135deg, #4fa3ff, #2d7eff);
     color: white;
     display: flex;
     align-items: center;
@@ -96,20 +135,25 @@ body::before {
     font-weight: bold;
 }
 
-.user-info {
-    font-size: 13px;
+.user-info .name {
+    font-weight: 600;
+    color: #1e3a5f;
 }
 
 .admin-badge {
-    background: #4285F4;
+    background: #2d7eff;
     color: white;
     font-size: 10px;
-    padding: 2px 6px;
-    border-radius: 8px;
+    padding: 3px 7px;
+    border-radius: 10px;
     margin-left: 6px;
 }
 
-/* Dropdown */
+.user-info .email {
+    font-size: 12px;
+    color: #4a6c8a;
+}
+
 .profile-dropdown {
     position: absolute;
     right: 0;
@@ -136,23 +180,24 @@ body::before {
     display: block;
 }
 
-/* Sidebar */
+/* ================= SIDEBAR ================= */
+
 .sidebar {
     position: fixed;
-    top: 110px;
-    left: 30px;
-    width: 260px;
-    height: calc(100% - 140px);
-    padding: 25px;
-    border-radius: 25px;
-    background: rgba(255,255,255,0.6);
-    backdrop-filter: blur(20px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-    transition: 0.4s;
+    top: 120px;
+    left: 40px;
+    width: 270px;
+    height: calc(100% - 160px);
+    padding: 30px;
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: blur(12px);
+    border-radius: 30px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.08);
+    transition: width 0.4s ease;
 }
 
 .sidebar.collapsed {
-    width: 90px;
+    width: 95px;
 }
 
 .sidebar.collapsed .text,
@@ -170,33 +215,58 @@ body::before {
     display: flex;
     align-items: center;
     gap: 15px;
-    padding: 14px;
-    border-radius: 15px;
+    padding: 16px;
+    border-radius: 20px;
     text-decoration: none;
-    color: #333;
-    margin-bottom: 10px;
-    transition: 0.3s;
+    color: #1e3a5f;
+    margin-bottom: 12px;
 }
 
 .sidebar a:hover {
-    background: rgba(255,255,255,0.8);
+    background: rgba(79,163,255,0.15);
+    box-shadow: 0 8px 20px rgba(79,163,255,0.3);
 }
 
 .sidebar a.active {
-    background: linear-gradient(135deg, #4285F4, #5b9cff);
+    background: linear-gradient(135deg, #4fa3ff, #2d7eff);
     color: white;
 }
 
-.collapse-btn {
-    border: none;
-    background: white;
-    border-radius: 50%;
-    padding: 5px;
-    cursor: pointer;
+/* ================= MAIN ================= */
+
+.main {
+    margin-left: 360px;
+    padding: 140px 80px;
 }
 
-/* Main */
-.main {
-    margin-left: 320px;
-    padding: 120px 60px;
+/* Cards */
+.card {
+    background: rgba(255,255,255,0.9);
+    border-radius: 30px;
+    padding: 40px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.05);
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+}
+
+/* Smooth transitions */
+* {
+    transition: all 0.25s ease;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .sidebar {
+        left: -300px;
+    }
+    .sidebar.collapsed {
+        left: 20px;
+    }
+    .main {
+        margin-left: 40px;
+        padding: 120px 30px;
+    }
 }
