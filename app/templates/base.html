@@ -30,7 +30,7 @@
             </div>
         </div>
 
-        <!-- User -->
+        <!-- User Profile -->
         <div class="user-profile" onclick="toggleProfile()">
             <div class="avatar">D</div>
 
@@ -101,29 +101,6 @@ function toggleSidebar() {
 function toggleNotifications() {
     document.getElementById("notificationPanel").classList.toggle("show-notifications");
 }
-
-/* Counter Animation */
-function animateCounter(el, target) {
-    let count = 0;
-    let speed = target / 60;
-
-    function update() {
-        count += speed;
-        if (count < target) {
-            el.innerText = Math.floor(count);
-            requestAnimationFrame(update);
-        } else {
-            el.innerText = target;
-        }
-    }
-    update();
-}
-
-window.onload = function() {
-    document.querySelectorAll(".counter").forEach(el => {
-        animateCounter(el, parseInt(el.dataset.target));
-    });
-};
 
 lucide.createIcons();
 </script>
