@@ -1,8 +1,22 @@
-﻿{% extends "base.html" %}
-{% block content %}
-<h2>Dashboard</h2>
-<p>Email: {{ user.email }}</p>
-<p>Credits: {{ user.credits }}</p>
-<p>Plan: {{ user.plan.name }}</p>
-{% endblock %}
+{% extends "base.html" %}
 
+{% block content %}
+<h1>Smart SaaS Accounting Platform</h1>
+
+<div class="cards">
+    <div class="card">
+        <h3>Credits</h3>
+        <p>10 Free Credits</p>
+    </div>
+
+    <div class="card">
+        <h3>Plan</h3>
+        <p>Free Plan</p>
+    </div>
+
+    <div class="card">
+        <h3>Status</h3>
+        <p>Active</p>
+    </div>
+</div>
+{% endblock %}
