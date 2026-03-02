@@ -11,6 +11,9 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 
+if not SECRET_KEY:
+    raise Exception("SECRET_KEY not set in environment variables")
+
 def get_password_hash(password: str):
     if not password:
         raise ValueError("Password cannot be empty")
@@ -21,7 +24,8 @@ def get_password_hash(password: str):
     return pwd_context.hash(password)
 
 def verify_password(plain, hashed):
-    plain = str(plain).encode("utf-8")[:72].decode("utf-8", errors="ignore")
+    plain = str(plain)
+    plain = plain.encode("utf-8")[:72].decode("utf-8", errors="ignore")
     return pwd_context.verify(plain, hashed)
 
 def create_access_token(data: dict):
