@@ -3,7 +3,6 @@
 <head>
     <title>Accounting Expert</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <link rel="stylesheet" href="/static/style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -15,18 +14,26 @@
     <div class="loader-circle"></div>
 </div>
 
-<!-- Topbar -->
+<!-- TOPBAR -->
 <div class="topbar">
 
-    <div class="logo-area">
+    <!-- Left -->
+    <div class="left-section">
+        <!-- Hamburger -->
+        <button class="hamburger" onclick="toggleSidebar()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
         <img src="/static/logo.png" class="logo-img">
         <span class="logo-text">Accounting Expert</span>
         <span class="plan-badge">Free Plan</span>
     </div>
 
+    <!-- Right -->
     <div class="top-right">
 
-        <!-- Notification -->
         <div class="notification" onclick="toggleNotifications()">
             <i data-lucide="bell"></i>
             <span class="notif-dot"></span>
@@ -38,17 +45,8 @@
             </div>
         </div>
 
-        <!-- User -->
         <div class="user-profile" onclick="toggleProfile()">
             <div class="avatar">D</div>
-
-            <div class="user-info">
-                <div class="name">
-                    Debasish
-                    <span class="admin-badge">Admin</span>
-                </div>
-                <div class="email">admin@accounting.com</div>
-            </div>
 
             <div class="profile-dropdown" id="profileDropdown">
                 <a href="#">Profile</a>
@@ -60,15 +58,11 @@
     </div>
 </div>
 
-<!-- Sidebar -->
-<div class="sidebar" id="sidebar">
+<!-- Overlay -->
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-    <div class="sidebar-header">
-        <span class="brand">MENU</span>
-        <button class="collapse-btn" onclick="toggleSidebar()">
-            <i data-lucide="chevron-left"></i>
-        </button>
-    </div>
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
 
     <a href="/" class="active">
         <i data-lucide="layout-dashboard"></i>
@@ -92,7 +86,7 @@
 
 </div>
 
-<!-- Main Content -->
+<!-- MAIN -->
 <div class="main">
     {% block content %}{% endblock %}
 </div>
@@ -100,7 +94,8 @@
 <script>
 
 function toggleSidebar() {
-    document.getElementById("sidebar").classList.toggle("collapsed");
+    document.getElementById("sidebar").classList.toggle("show");
+    document.getElementById("overlay").classList.toggle("show");
 }
 
 function toggleProfile() {
