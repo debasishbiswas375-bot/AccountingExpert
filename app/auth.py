@@ -14,19 +14,21 @@ ALGORITHM = "HS256"
 if not SECRET_KEY:
     raise Exception("SECRET_KEY not set")
 
+
 def get_password_hash(password: str):
     if not password:
         raise ValueError("Password cannot be empty")
 
     password = str(password)
     password = password.encode("utf-8")[:72].decode("utf-8", errors="ignore")
-
     return pwd_context.hash(password)
+
 
 def verify_password(plain, hashed):
     plain = str(plain)
     plain = plain.encode("utf-8")[:72].decode("utf-8", errors="ignore")
     return pwd_context.verify(plain, hashed)
+
 
 def create_access_token(data: dict):
     to_encode = data.copy()
