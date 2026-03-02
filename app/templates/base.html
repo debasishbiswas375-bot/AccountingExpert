@@ -3,54 +3,86 @@
 <head>
     <title>Accounting Expert</title>
     <link rel="stylesheet" href="/static/style.css">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
-<!-- Top Navigation -->
+<!-- Topbar -->
 <div class="topbar">
 
-    <!-- Logo Left -->
+    <!-- Logo -->
     <div class="logo-area">
         <img src="/static/logo.png" class="logo-img">
         <span class="logo-text">Accounting Expert</span>
+        <span class="plan-badge">Free Plan</span>
     </div>
 
-    <!-- User Profile Right -->
-    <div class="user-profile" onclick="toggleProfile()">
-        <div class="avatar">D</div>
-        <div class="user-info">
-            <div class="name">Debasish</div>
-            <div class="email">admin@accounting.com</div>
+    <!-- Right Section -->
+    <div class="top-right">
+
+        <!-- Notification -->
+        <div class="notification">
+            <i data-lucide="bell"></i>
+            <span class="notif-dot"></span>
         </div>
 
-        <div class="profile-dropdown" id="profileDropdown">
-            <a href="#">My Profile</a>
-            <a href="#">Settings</a>
-            <a href="#">Logout</a>
+        <!-- User Profile -->
+        <div class="user-profile" onclick="toggleProfile()">
+            <div class="avatar">D</div>
+
+            <div class="user-info">
+                <div class="name">
+                    Debasish
+                    <span class="admin-badge">Admin</span>
+                </div>
+                <div class="email">admin@accounting.com</div>
+            </div>
+
+            <div class="profile-dropdown" id="profileDropdown">
+                <a href="#">My Profile</a>
+                <a href="#">Settings</a>
+                <a href="#">Logout</a>
+            </div>
         </div>
+
     </div>
+</div>
+
+<!-- Collapsible Sidebar -->
+<div class="sidebar" id="sidebar">
+
+    <div class="sidebar-header">
+        <span class="brand">MENU</span>
+        <button class="collapse-btn" onclick="toggleSidebar()">
+            <i data-lucide="chevron-left"></i>
+        </button>
+    </div>
+
+    <a href="/" class="active">
+        <i data-lucide="layout-dashboard"></i>
+        <span class="text">Dashboard</span>
+    </a>
+
+    <a href="/admin">
+        <i data-lucide="shield"></i>
+        <span class="text">Admin</span>
+    </a>
+
+    <a href="#">
+        <i data-lucide="credit-card"></i>
+        <span class="text">Billing</span>
+    </a>
+
+    <a href="#">
+        <i data-lucide="settings"></i>
+        <span class="text">Settings</span>
+    </a>
 
 </div>
 
-<!-- Glass Sidebar -->
-<div class="sidebar">
-
-    <div class="menu-title">MAIN</div>
-
-    <a href="/" class="{% if request.url.path == '/' %}active{% endif %}">
-        Dashboard
-    </a>
-
-    <a href="/admin" class="{% if request.url.path == '/admin' %}active{% endif %}">
-        Admin
-    </a>
-
-    <a href="#">Billing</a>
-    <a href="#">Settings</a>
-
-</div>
-
-<!-- Main Content -->
+<!-- Main -->
 <div class="main">
     {% block content %}{% endblock %}
 </div>
@@ -59,6 +91,12 @@
 function toggleProfile() {
     document.getElementById("profileDropdown").classList.toggle("show-profile");
 }
+
+function toggleSidebar() {
+    document.getElementById("sidebar").classList.toggle("collapsed");
+}
+
+lucide.createIcons();
 </script>
 
 </body>
