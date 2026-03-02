@@ -8,10 +8,13 @@ from .database import engine, SessionLocal, Base
 from .models import User, Plan
 from .auth import get_password_hash
 
-app = FastAPI()   # 👈 THIS MUST EXIST
+app = FastAPI()
 
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
-templates = Jinja2Templates(directory="app/templates")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Static & Template absolute paths (Render safe)
+app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
+templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
 Base.metadata.create_all(bind=engine)
 
@@ -19,12 +22,14 @@ Base.metadata.create_all(bind=engine)
 def init_data():
     db = SessionLocal()
 
+    # Create Free Plan
     free_plan = db.query(Plan).filter(Plan.name == "Free").first()
     if not free_plan:
         free_plan = Plan(name="Free", credits=10)
         db.add(free_plan)
         db.commit()
 
+    # Create Admin
     admin = db.query(User).filter(User.role == "admin").first()
     if not admin:
         admin_email = os.getenv("ADMIN_EMAIL")
