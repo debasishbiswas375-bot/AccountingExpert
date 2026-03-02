@@ -6,52 +6,58 @@
 </head>
 <body>
 
-<!-- Topbar -->
+<!-- Top Navigation -->
 <div class="topbar">
+
+    <!-- Logo Left -->
     <div class="logo-area">
         <img src="/static/logo.png" class="logo-img">
-        <span>Accounting Expert</span>
+        <span class="logo-text">Accounting Expert</span>
     </div>
+
+    <!-- User Profile Right -->
+    <div class="user-profile" onclick="toggleProfile()">
+        <div class="avatar">D</div>
+        <div class="user-info">
+            <div class="name">Debasish</div>
+            <div class="email">admin@accounting.com</div>
+        </div>
+
+        <div class="profile-dropdown" id="profileDropdown">
+            <a href="#">My Profile</a>
+            <a href="#">Settings</a>
+            <a href="#">Logout</a>
+        </div>
+    </div>
+
 </div>
 
 <!-- Glass Sidebar -->
-<div class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-        <span class="brand">Menu</span>
-        <div class="toggle-btn" onclick="toggleSidebar()">⮜</div>
-    </div>
+<div class="sidebar">
 
-    <div class="menu-section">MAIN</div>
+    <div class="menu-title">MAIN</div>
 
-    <a href="/" class="active">
-        <span class="icon">🏠</span>
-        <span class="text">Dashboard</span>
+    <a href="/" class="{% if request.url.path == '/' %}active{% endif %}">
+        Dashboard
     </a>
 
-    <a href="/admin">
-        <span class="icon">👤</span>
-        <span class="text">Admin</span>
+    <a href="/admin" class="{% if request.url.path == '/admin' %}active{% endif %}">
+        Admin
     </a>
 
-    <a href="#">
-        <span class="icon">💰</span>
-        <span class="text">Billing</span>
-    </a>
+    <a href="#">Billing</a>
+    <a href="#">Settings</a>
 
-    <a href="#">
-        <span class="icon">⚙</span>
-        <span class="text">Settings</span>
-    </a>
 </div>
 
-<!-- Main -->
+<!-- Main Content -->
 <div class="main">
     {% block content %}{% endblock %}
 </div>
 
 <script>
-function toggleSidebar() {
-    document.getElementById("sidebar").classList.toggle("collapsed");
+function toggleProfile() {
+    document.getElementById("profileDropdown").classList.toggle("show-profile");
 }
 </script>
 
