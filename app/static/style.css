@@ -1,28 +1,17 @@
-/* ===== SKY BACKGROUND ===== */
+/* =========================
+   SKY BACKGROUND
+========================= */
 
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
     background: linear-gradient(135deg, #6ec3ff, #c7ebff);
     overflow-x: hidden;
-    position: relative;
 }
 
-/* Watermark logo */
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background-image: url("/static/logo.png");
-    background-repeat: repeat;
-    background-size: 200px;
-    opacity: 0.05;
-    filter: grayscale(100%);
-    pointer-events: none;
-    z-index: -1;
-}
-
-/* ===== TOPBAR ===== */
+/* =========================
+   TOPBAR
+========================= */
 
 .topbar {
     height: 70px;
@@ -56,11 +45,13 @@ body::before {
     font-size: 12px;
 }
 
-/* ===== HAMBURGER ===== */
+/* =========================
+   HAMBURGER
+========================= */
 
 .hamburger {
     width: 30px;
-    height: 24px;
+    height: 22px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -75,81 +66,118 @@ body::before {
     border-radius: 3px;
 }
 
-/* ===== SIDEBAR BUBBLE ===== */
+/* =========================
+   SIDEBAR (SOAP BUBBLE)
+========================= */
 
 .sidebar {
     position: fixed;
     top: 80px;
-    left: -320px;
-    width: 260px;
+    left: 20px;
     height: calc(100% - 100px);
+    width: 260px;
     padding: 25px;
 
-    background: rgba(255,255,255,0.25);
-    backdrop-filter: blur(25px);
-    border-radius: 35px;
+    background: radial-gradient(circle at 30% 20%,
+        rgba(255,255,255,0.7),
+        rgba(255,255,255,0.25) 40%,
+        rgba(255,255,255,0.15) 70%);
+
+    backdrop-filter: blur(35px);
+    border-radius: 50px;
 
     box-shadow:
-        0 30px 60px rgba(0,0,0,0.2),
-        inset 0 0 25px rgba(255,255,255,0.5);
+        0 40px 80px rgba(0,0,0,0.18),
+        inset 0 0 60px rgba(255,255,255,0.8);
 
-    transition: 0.4s ease;
+    transition: all 0.3s ease;
     z-index: 1000;
 }
 
-.sidebar.show {
-    left: 20px;
-}
-
-/* Sidebar links */
+/* LINKS */
 
 .sidebar a {
     display: flex;
     align-items: center;
     gap: 15px;
-    padding: 15px;
-    border-radius: 20px;
+    padding: 16px;
+    border-radius: 30px;
     text-decoration: none;
     color: #0f2e4d;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
+    transition: 0.3s;
 }
 
 .sidebar a:hover {
-    background: rgba(79,163,255,0.3);
+    background: rgba(79,163,255,0.25);
 }
 
 .sidebar a.active {
-    background: linear-gradient(135deg, #4fa3ff, #2d7eff);
+    background: linear-gradient(135deg,#4fa3ff,#2d7eff);
     color: white;
 }
 
-/* ===== OVERLAY ===== */
+/* =========================
+   MINI MODE (DESKTOP)
+========================= */
 
-.overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.2);
+.sidebar.mini {
+    width: 80px;
+}
+
+.sidebar.mini .text {
     display: none;
-    z-index: 900;
 }
 
-.overlay.show {
-    display: block;
-}
-
-/* ===== MAIN ===== */
+/* =========================
+   MAIN CONTENT
+========================= */
 
 .main {
-    padding: 100px 20px;
+    margin-left: 300px;
+    padding: 120px 40px;
+    transition: 0.3s ease;
 }
 
-/* ===== USER & NOTIFICATION ===== */
-
-.top-right {
-    display: flex;
-    align-items: center;
-    gap: 15px;
+.sidebar.mini ~ .main {
+    margin-left: 120px;
 }
+
+/* =========================
+   MOBILE BEHAVIOR
+========================= */
+
+@media (max-width: 900px) {
+
+    /* Default mobile = mini */
+    .sidebar {
+        width: 80px;
+        left: 10px;
+    }
+
+    .sidebar .text {
+        display: none;
+    }
+
+    /* Expand mode */
+    .sidebar.mobile-expanded {
+        width: 240px;
+        padding: 25px;
+    }
+
+    .sidebar.mobile-expanded .text {
+        display: inline;
+    }
+
+    .main {
+        margin-left: 100px;
+        padding: 100px 20px;
+    }
+}
+
+/* =========================
+   AVATAR
+========================= */
 
 .avatar {
     width: 40px;
@@ -160,76 +188,4 @@ body::before {
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.notification {
-    position: relative;
-}
-
-.notif-dot {
-    position: absolute;
-    top: -3px;
-    right: -3px;
-    width: 8px;
-    height: 8px;
-    background: red;
-    border-radius: 50%;
-}
-
-.notification-panel {
-    position: absolute;
-    right: 0;
-    top: 35px;
-    width: 200px;
-    background: white;
-    padding: 10px;
-    border-radius: 15px;
-    display: none;
-}
-
-.show-notifications {
-    display: block;
-}
-
-.profile-dropdown {
-    position: absolute;
-    right: 0;
-    top: 45px;
-    background: white;
-    width: 150px;
-    border-radius: 10px;
-    display: none;
-}
-
-.show-profile {
-    display: block;
-}
-
-/* ===== LOADER ===== */
-
-.loader {
-    position: fixed;
-    inset: 0;
-    background: #6ec3ff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-}
-
-.loader.hidden {
-    display: none;
-}
-
-.loader-circle {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 4px solid rgba(255,255,255,0.5);
-    border-top: 4px solid white;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
 }
