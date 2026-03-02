@@ -1,18 +1,42 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="/static/style.css">
+    <title>Accounting Expert</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-<nav>
-<a href="/">Home</a>
-<a href="/dashboard">Dashboard</a>
-<a href="/plans">Plans</a>
-<a href="/admin">Admin</a>
-</nav>
-<div>
-{% block content %}{% endblock %}
+
+<div class="topbar">
+    <div class="logo">Accounting Expert</div>
+
+    <div class="profile-menu">
+        <div class="profile-btn" onclick="toggleMenu()">☰</div>
+        <div class="dropdown" id="dropdown">
+            <a href="/">Dashboard</a>
+            <a href="/admin">Admin</a>
+            <a href="#">Profile</a>
+            <a href="#">Logout</a>
+        </div>
+    </div>
 </div>
+
+<div class="sidebar">
+    <h3>Menu</h3>
+    <a href="/">Dashboard</a>
+    <a href="/admin">Admin</a>
+    <a href="#">Billing</a>
+    <a href="#">Settings</a>
+</div>
+
+<div class="main">
+    {% block content %}{% endblock %}
+</div>
+
+<script>
+function toggleMenu() {
+    document.getElementById("dropdown").classList.toggle("show");
+}
+</script>
+
 </body>
 </html>
-
