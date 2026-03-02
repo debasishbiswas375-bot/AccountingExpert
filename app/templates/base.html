@@ -10,27 +10,38 @@
 <div class="topbar">
     <div class="logo-area">
         <img src="/static/logo.png" class="logo-img">
-        <span class="logo-text">Accounting Expert</span>
-    </div>
-
-    <div class="profile-menu">
-        <div class="profile-btn" onclick="toggleMenu()">A</div>
-        <div class="dropdown" id="dropdown">
-            <a href="/">Dashboard</a>
-            <a href="/admin">Admin</a>
-            <a href="#">Profile</a>
-            <a href="#">Logout</a>
-        </div>
+        <span>Accounting Expert</span>
     </div>
 </div>
 
-<!-- Bubble Sidebar -->
-<div class="sidebar">
-    <div class="menu-title">MENU</div>
-    <a href="/" class="{% if request.url.path == '/' %}active{% endif %}">Dashboard</a>
-    <a href="/admin" class="{% if request.url.path == '/admin' %}active{% endif %}">Admin</a>
-    <a href="#">Billing</a>
-    <a href="#">Settings</a>
+<!-- Glass Sidebar -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <span class="brand">Menu</span>
+        <div class="toggle-btn" onclick="toggleSidebar()">⮜</div>
+    </div>
+
+    <div class="menu-section">MAIN</div>
+
+    <a href="/" class="active">
+        <span class="icon">🏠</span>
+        <span class="text">Dashboard</span>
+    </a>
+
+    <a href="/admin">
+        <span class="icon">👤</span>
+        <span class="text">Admin</span>
+    </a>
+
+    <a href="#">
+        <span class="icon">💰</span>
+        <span class="text">Billing</span>
+    </a>
+
+    <a href="#">
+        <span class="icon">⚙</span>
+        <span class="text">Settings</span>
+    </a>
 </div>
 
 <!-- Main -->
@@ -39,8 +50,8 @@
 </div>
 
 <script>
-function toggleMenu() {
-    document.getElementById("dropdown").classList.toggle("show");
+function toggleSidebar() {
+    document.getElementById("sidebar").classList.toggle("collapsed");
 }
 </script>
 
