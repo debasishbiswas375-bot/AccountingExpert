@@ -12,7 +12,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 
 if not SECRET_KEY:
-    raise Exception("SECRET_KEY not set in environment variables")
+    raise Exception("SECRET_KEY not set")
 
 def get_password_hash(password: str):
     if not password:
