@@ -9,23 +9,19 @@ from .models import User, Plan
 from .auth import get_password_hash
 
 # --------------------------------------------------
-# App Init
-# --------------------------------------------------
 
 app = FastAPI()
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Static & Template directories (Render safe)
-app.mount(
-    "/static",
-    StaticFiles(directory=os.path.join(BASE_DIR, "static")),
-    name="static"
-)
+# Absolute paths (Render safe)
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")
 
-templates = Jinja2Templates(
-    directory=os.path.join(BASE_DIR, "templates")
-)
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+templates = Jinja2Templates(directory=TEMPLATE_DIR)# App Init
+# --------------------------------------------------
 
 # --------------------------------------------------
 # Create Tables
@@ -100,3 +96,4 @@ def admin_panel(request: Request):
         "admin.html",
         {"request": request}
     )
+
