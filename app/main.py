@@ -85,19 +85,18 @@ def startup_event():
 # --------------------------------------------------
 # Routes
 # --------------------------------------------------
-
 # Home Page
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
     return templates.TemplateResponse(
-        "index.html",
+        "dashboard.html",
         {"request": request}
     )
 
-# Admin Page (basic for now)
+# Admin Page
 @app.get("/admin", response_class=HTMLResponse)
 def admin_panel(request: Request):
     return templates.TemplateResponse(
-        "index.html",
+        "admin.html",
         {"request": request}
     )
