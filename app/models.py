@@ -1,27 +1,19 @@
-﻿from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship
-from app.database import Base
+import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
+from dotenv import load_dotenv
 
-class Plan(Base):
-    __tablename__ = "plans"
+load_dotenv()
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String, unique=True)
-    price = Column(Integer)
-    credits = Column(Integer)
-    description = Column(String)
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-    users = relationship("User", back_populates="plan")
+if not DATABASE_URL:
+    raise Exception("DATABASE_URL not set")
 
-class User(Base):
-    __tablename__ = "users"
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True
+)
 
-    id = Column(Integer, primary_key=True)
-    email = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
-    role = Column(String, default="user")
-    credits = Column(Integer, default=0)
-    plan_id = Column(Integer, ForeignKey("plans.id"))
-
-    plan = relationship("Plan", back_populates="users")
-
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
