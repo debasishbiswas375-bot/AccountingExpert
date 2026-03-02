@@ -6,9 +6,12 @@
 </head>
 <body>
 
-<!-- Top Navigation -->
+<!-- Topbar -->
 <div class="topbar">
-    <div class="logo">Accounting Expert</div>
+    <div class="logo-area">
+        <img src="/static/logo.png" class="logo-img">
+        <span class="logo-text">Accounting Expert</span>
+    </div>
 
     <div class="profile-menu">
         <div class="profile-btn" onclick="toggleMenu()">A</div>
@@ -21,16 +24,16 @@
     </div>
 </div>
 
-<!-- Sidebar -->
+<!-- Bubble Sidebar -->
 <div class="sidebar">
-    <h3>Menu</h3>
+    <div class="menu-title">MENU</div>
     <a href="/" class="{% if request.url.path == '/' %}active{% endif %}">Dashboard</a>
     <a href="/admin" class="{% if request.url.path == '/admin' %}active{% endif %}">Admin</a>
     <a href="#">Billing</a>
     <a href="#">Settings</a>
 </div>
 
-<!-- Main Content -->
+<!-- Main -->
 <div class="main">
     {% block content %}{% endblock %}
 </div>
