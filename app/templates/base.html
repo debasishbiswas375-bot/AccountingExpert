@@ -3,18 +3,236 @@
 <head>
     <title>Accounting Expert</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+
+    /* ===============================
+       SKY BACKGROUND + LOGO PATTERN
+    ================================ */
+
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        overflow-x: hidden;
+        background: linear-gradient(135deg, #6ec3ff, #c7ebff);
+        position: relative;
+    }
+
+    body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image: url("/static/logo.png");
+        background-repeat: repeat;
+        background-size: 110px;
+        filter: grayscale(100%);
+        opacity: 0.04;
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    /* ===============================
+       TOPBAR
+    ================================ */
+
+    .topbar {
+        height: 70px;
+        background: rgba(255,255,255,0.35);
+        backdrop-filter: blur(20px);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+    }
+
+    .left-section {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .logo-img {
+        height: 35px;
+    }
+
+    .logo-text {
+        font-weight: 600;
+    }
+
+    .plan-badge {
+        background: #2d7eff;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 14px;
+        font-size: 12px;
+    }
+
+    .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #2d7eff;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* ===============================
+       HAMBURGER
+    ================================ */
+
+    .hamburger {
+        width: 30px;
+        height: 22px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    .hamburger span {
+        height: 3px;
+        background: #000;
+        border-radius: 3px;
+    }
+
+    /* ===============================
+       TRUE SOAP BUBBLE SIDEBAR
+    ================================ */
+
+    .sidebar {
+        position: fixed;
+        top: 80px;
+        left: 20px;
+        height: calc(100% - 100px);
+        width: 260px;
+        padding: 25px;
+        border-radius: 65px;
+
+        background:
+            linear-gradient(
+                to bottom,
+                rgba(255,255,255,0.85) 0%,
+                rgba(255,255,255,0.55) 10%,
+                rgba(255,255,255,0.2) 25%,
+                rgba(255,255,255,0.05) 40%
+            ),
+            radial-gradient(
+                circle at 5% 50%,
+                rgba(255,255,255,0.8),
+                rgba(255,255,255,0.3) 20%,
+                transparent 60%
+            ),
+            radial-gradient(
+                circle at 95% 50%,
+                rgba(79,163,255,0.4),
+                transparent 60%
+            ),
+            rgba(255,255,255,0.18);
+
+        backdrop-filter: blur(45px) saturate(180%);
+        -webkit-backdrop-filter: blur(45px);
+
+        border: 1.5px solid rgba(255,255,255,0.6);
+
+        box-shadow:
+            0 60px 120px rgba(0,0,0,0.25),
+            inset 0 0 100px rgba(255,255,255,0.9),
+            inset 0 0 160px rgba(79,163,255,0.15),
+            0 0 60px rgba(79,163,255,0.25);
+
+        transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+        z-index: 1000;
+    }
+
+    .sidebar a {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 16px;
+        border-radius: 30px;
+        text-decoration: none;
+        color: #0f2e4d;
+        margin-bottom: 14px;
+        transition: 0.3s ease;
+    }
+
+    .sidebar a:hover {
+        background: rgba(79,163,255,0.25);
+    }
+
+    .sidebar a.active {
+        background: linear-gradient(135deg,#4fa3ff,#2d7eff);
+        color: white;
+    }
+
+    /* ===============================
+       DESKTOP DEFAULT FULL
+    ================================ */
+
+    @media (min-width: 901px) {
+
+        .main {
+            margin-left: 300px;
+            padding: 120px 40px;
+            transition: 0.3s ease;
+        }
+
+        .sidebar.mini {
+            width: 80px;
+        }
+
+        .sidebar.mini .text {
+            display: none;
+        }
+
+        .sidebar.mini ~ .main {
+            margin-left: 120px;
+        }
+    }
+
+    /* ===============================
+       MOBILE DEFAULT MINI
+    ================================ */
+
+    @media (max-width: 900px) {
+
+        .sidebar {
+            width: 80px;
+            left: 10px;
+            padding: 20px 10px;
+        }
+
+        .sidebar .text {
+            display: none;
+        }
+
+        .sidebar.mobile-expanded {
+            width: 240px;
+            padding: 25px;
+        }
+
+        .sidebar.mobile-expanded .text {
+            display: inline;
+        }
+
+        .main {
+            margin-left: 100px;
+            padding: 100px 20px;
+        }
+    }
+
+    </style>
 </head>
 
 <body>
 
-<!-- TOPBAR -->
 <div class="topbar">
-
     <div class="left-section">
-
-        <!-- Toggle Button -->
         <button class="hamburger" onclick="toggleSidebar()">
             <span></span>
             <span></span>
@@ -26,13 +244,9 @@
         <span class="plan-badge">Free Plan</span>
     </div>
 
-    <div class="top-right">
-        <div class="avatar">D</div>
-    </div>
-
+    <div class="avatar">D</div>
 </div>
 
-<!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
 
     <a href="/" class="active">
@@ -57,16 +271,13 @@
 
 </div>
 
-<!-- MAIN -->
 <div class="main">
     <h1>Dashboard</h1>
     <p>Welcome to Accounting Expert Enterprise UI</p>
 </div>
 
 <script>
-
 function toggleSidebar() {
-
     const sidebar = document.getElementById("sidebar");
 
     if (window.innerWidth <= 900) {
@@ -77,7 +288,6 @@ function toggleSidebar() {
 }
 
 lucide.createIcons();
-
 </script>
 
 </body>
