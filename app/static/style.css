@@ -1,63 +1,66 @@
-/* ================= GLOBAL ================= */
+/* ==============================
+   GLOBAL SKY BACKGROUND
+============================== */
 
 body{
     margin:0;
-    font-family:Inter, sans-serif;
-    background:
-        radial-gradient(circle at 20% 10%, #1e2b5c, #0c1228 70%);
-    color:#e4ecff;
+    font-family:'Segoe UI',sans-serif;
+    background: radial-gradient(circle at 15% 10%, #a8d4ff, #3c8dff 60%, #1f56c2 100%);
+    color:#ffffff;
     overflow-x:hidden;
     position:relative;
 }
 
-/* subtle grayscale logo background */
+/* Subtle logo watermark */
 body::before{
     content:"";
     position:fixed;
     inset:0;
     background:url("logo.png");
-    background-size:90px;   /* half size */
+    background-size:50px;
     background-repeat:repeat;
-    opacity:0.035;          /* 3.5% */
-    filter:grayscale(100%) brightness(0.4);
+    opacity:0.03;
+    filter:grayscale(100%);
     pointer-events:none;
 }
 
-/* ================= HEADER ================= */
+/* ==============================
+   TOPBAR (TRANSPARENT)
+============================== */
 
 .topbar{
-    height:80px;
+    height:75px;
     display:flex;
     justify-content:space-between;
     align-items:center;
     padding:0 40px;
-    backdrop-filter:blur(6px);
+    background:transparent;
 }
 
-.left{
+.left-section{
     display:flex;
     align-items:center;
-    gap:20px;
+    gap:15px;
 }
 
-.brand{
-    display:flex;
-    align-items:center;
-    gap:12px;
+.logo-img{
+    height:38px;
 }
 
-.brand img{
-    height:42px;
+.logo-text{
+    font-size:18px;
+    font-weight:600;
 }
 
-.plan{
-    background:#2f80ed;
-    padding:5px 14px;
+.plan-badge{
+    background:#ffffff20;
+    backdrop-filter:blur(10px);
+    padding:4px 14px;
     border-radius:20px;
-    font-size:13px;
+    font-size:12px;
 }
 
-.right{
+.top-right{
     display:flex;
     align-items:center;
     gap:20px;
@@ -67,110 +70,141 @@ body::before{
     width:40px;
     height:40px;
     border-radius:50%;
-    background:linear-gradient(145deg,#4f8df7,#1c60e6);
+    background:linear-gradient(145deg,#ffffff80,#ffffff30);
     display:flex;
     align-items:center;
     justify-content:center;
-    font-weight:600;
+    font-weight:bold;
+    backdrop-filter:blur(10px);
 }
 
-/* ================= LAYOUT ================= */
-
-.layout{
-    display:flex;
-}
-
-/* ================= SIDEBAR ================= */
+/* ==============================
+   REAL SOAP BUBBLE SIDEBAR
+============================== */
 
 .sidebar{
-    width:250px;
-    min-height:100vh;
-    padding:120px 20px 40px;
-    position:relative;
+    position:fixed;
+    top:90px;
+    left:30px;
+    width:240px;
+    padding:25px;
+    border-radius:30px;
 
-    background:
-        linear-gradient(
-            160deg,
-            rgba(255,255,255,0.08),
-            rgba(255,255,255,0.02)
-        );
+    background: linear-gradient(
+        145deg,
+        rgba(255,255,255,0.25),
+        rgba(255,255,255,0.08)
+    );
 
-    backdrop-filter:blur(18px);
-
-    border-right:1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(35px);
+    -webkit-backdrop-filter: blur(35px);
 
     box-shadow:
-        0 0 40px rgba(0,120,255,0.15),
-        inset 0 0 25px rgba(255,255,255,0.05);
+        inset 0 0 25px rgba(255,255,255,0.4),
+        inset 0 0 60px rgba(255,255,255,0.15),
+        0 15px 45px rgba(0,0,0,0.25);
 
-    transition:.3s ease;
+    transition:0.3s ease;
 }
 
-/* glass edge light */
-.sidebar::after{
+/* Light reflection layer */
+.sidebar::before{
     content:"";
     position:absolute;
-    inset:0;
+    top:0;
+    left:0;
+    width:100%;
+    height:60%;
+    border-radius:30px;
     background:linear-gradient(
-        180deg,
-        rgba(255,255,255,0.15),
-        transparent 40%
+        to bottom,
+        rgba(255,255,255,0.5),
+        transparent
     );
+    opacity:0.25;
     pointer-events:none;
 }
 
-/* menu items */
+/* Menu items */
 
 .item{
     display:flex;
     align-items:center;
-    gap:18px;
-    padding:14px 20px;
-    border-radius:14px;
-    color:#cfd8ff;
+    gap:15px;
+    padding:12px 15px;
+    border-radius:18px;
     text-decoration:none;
-    transition:.2s;
-}
-
-.item.active{
-    background:linear-gradient(145deg,#4f8df7,#1c60e6);
     color:white;
+    transition:0.2s ease;
 }
 
 .item:hover{
-    background:rgba(255,255,255,0.08);
+    background:rgba(255,255,255,0.2);
+}
+
+.item i{
+    width:20px;
 }
 
 /* MINI MODE */
 
 .sidebar.mini{
-    width:90px;
+    width:85px;
 }
 
 .sidebar.mini span{
     display:none;
 }
 
-/* ================= CONTENT ================= */
+/* ==============================
+   MAIN CONTENT
+============================== */
 
-.content{
-    flex:1;
-    padding:140px 80px;
+.main{
+    margin-left:320px;
+    padding:120px 50px;
 }
 
-/* ================= MOBILE ================= */
+.sidebar.mini ~ .main{
+    margin-left:150px;
+}
+
+/* ==============================
+   HAMBURGER
+============================== */
+
+.hamburger{
+    background:none;
+    border:none;
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+}
+
+.hamburger span{
+    width:22px;
+    height:2px;
+    background:white;
+}
+
+/* ==============================
+   MOBILE VERSION
+============================== */
 
 @media(max-width:768px){
 
     .sidebar{
-        width:90px;
+        width:85px;
+        left:15px;
     }
 
     .sidebar span{
         display:none;
     }
 
-    .content{
-        padding:120px 30px;
+    .main{
+        margin-left:140px;
+        padding:120px 25px;
     }
 }
