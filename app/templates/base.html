@@ -3,6 +3,7 @@
 <head>
     <title>Accounting Expert</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="stylesheet" href="/static/style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -11,10 +12,7 @@
 
 <!-- TOPBAR -->
 <div class="topbar">
-
     <div class="left-section">
-
-        <!-- Toggle Button -->
         <button class="hamburger" onclick="toggleSidebar()">
             <span></span>
             <span></span>
@@ -27,57 +25,47 @@
     </div>
 
     <div class="top-right">
+        <i data-lucide="bell"></i>
         <div class="avatar">D</div>
     </div>
-
 </div>
 
 <!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
 
-    <a href="/" class="active">
+    <a href="/" class="item">
         <i data-lucide="layout-dashboard"></i>
-        <span class="text">Dashboard</span>
+        <span>Dashboard</span>
     </a>
 
-    <a href="/admin">
+    <a href="/admin" class="item">
         <i data-lucide="shield"></i>
-        <span class="text">Admin</span>
+        <span>Admin</span>
     </a>
 
-    <a href="#">
+    <a href="/plans" class="item">
         <i data-lucide="credit-card"></i>
-        <span class="text">Billing</span>
+        <span>Plans</span>
     </a>
 
-    <a href="#">
+    <a href="#" class="item">
         <i data-lucide="settings"></i>
-        <span class="text">Settings</span>
+        <span>Settings</span>
     </a>
 
 </div>
 
-<!-- MAIN -->
+<!-- MAIN CONTENT -->
 <div class="main">
-    <h1>Dashboard</h1>
-    <p>Welcome to Accounting Expert Enterprise UI</p>
+    {% block content %}
+    {% endblock %}
 </div>
 
 <script>
-
-function toggleSidebar() {
-
-    const sidebar = document.getElementById("sidebar");
-
-    if (window.innerWidth <= 900) {
-        sidebar.classList.toggle("mobile-expanded");
-    } else {
-        sidebar.classList.toggle("mini");
-    }
+function toggleSidebar(){
+    document.getElementById("sidebar").classList.toggle("mini");
 }
-
 lucide.createIcons();
-
 </script>
 
 </body>
