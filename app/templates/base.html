@@ -12,7 +12,7 @@
 <header class="topbar">
 
     <div class="left">
-        <button class="menu-toggle" onclick="toggleSidebar()">
+        <button class="menu-btn" onclick="toggleSidebar()">
             <i data-lucide="menu"></i>
         </button>
 
@@ -30,34 +30,38 @@
 
 </header>
 
-<aside class="sidebar" id="sidebar">
+<div class="layout">
 
-    <a href="/" class="item active">
-        <i data-lucide="layout-dashboard"></i>
-        <span>Dashboard</span>
-    </a>
+    <aside class="sidebar" id="sidebar">
 
-    <a href="/admin" class="item">
-        <i data-lucide="shield"></i>
-        <span>Admin</span>
-    </a>
+        <a class="item active">
+            <i data-lucide="layout-dashboard"></i>
+            <span>Dashboard</span>
+        </a>
 
-    <a href="#" class="item">
-        <i data-lucide="credit-card"></i>
-        <span>Billing</span>
-    </a>
+        <a class="item">
+            <i data-lucide="shield"></i>
+            <span>Admin</span>
+        </a>
 
-    <a href="#" class="item">
-        <i data-lucide="settings"></i>
-        <span>Settings</span>
-    </a>
+        <a class="item">
+            <i data-lucide="credit-card"></i>
+            <span>Billing</span>
+        </a>
 
-</aside>
+        <a class="item">
+            <i data-lucide="settings"></i>
+            <span>Settings</span>
+        </a>
 
-<main class="content">
-    <h1>Dashboard</h1>
-    <p>Welcome to Accounting Expert Enterprise UI</p>
-</main>
+    </aside>
+
+    <main class="content">
+        <h1>Dashboard</h1>
+        <p>Welcome to Accounting Expert Enterprise UI</p>
+    </main>
+
+</div>
 
 <script>
 lucide.createIcons();
