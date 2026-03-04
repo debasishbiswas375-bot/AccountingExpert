@@ -11,7 +11,7 @@
 
 <header class="topbar">
 
-    <div class="left-header">
+    <div class="left">
         <button class="menu-toggle" onclick="toggleSidebar()">
             <i data-lucide="menu"></i>
         </button>
@@ -19,12 +19,12 @@
         <div class="brand">
             <img src="/static/logo.png">
             <span>Accounting Expert</span>
-            <span class="plan-badge">Free Plan</span>
+            <span class="plan">Free Plan</span>
         </div>
     </div>
 
-    <div class="right-header">
-        <i data-lucide="bell" class="bell"></i>
+    <div class="right">
+        <i data-lucide="bell"></i>
         <div class="avatar">D</div>
     </div>
 
@@ -32,36 +32,35 @@
 
 <aside class="sidebar" id="sidebar">
 
-    <a href="/" class="menu-item active">
+    <a href="/" class="item active">
         <i data-lucide="layout-dashboard"></i>
         <span>Dashboard</span>
     </a>
 
-    <a href="/admin" class="menu-item">
+    <a href="/admin" class="item">
         <i data-lucide="shield"></i>
         <span>Admin</span>
     </a>
 
-    <a href="#" class="menu-item">
+    <a href="#" class="item">
         <i data-lucide="credit-card"></i>
         <span>Billing</span>
     </a>
 
-    <a href="#" class="menu-item">
+    <a href="#" class="item">
         <i data-lucide="settings"></i>
         <span>Settings</span>
     </a>
 
 </aside>
 
-<main class="main-content">
+<main class="content">
     <h1>Dashboard</h1>
     <p>Welcome to Accounting Expert Enterprise UI</p>
 </main>
 
 <script>
 lucide.createIcons();
-
 function toggleSidebar(){
     document.getElementById("sidebar").classList.toggle("mini");
 }
