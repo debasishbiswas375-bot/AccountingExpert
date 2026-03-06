@@ -1,17 +1,16 @@
-import os
-import threading
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+import threading
+import os
 
-from .database import engine
-from .models import Base
-from .auth_middleware import get_current_user, require_admin
+from .database import Base, engine
+from .queue_worker import process_queue
 
-# --------------------------------------------------
-# App Init
-# --------------------------------------------------
+from .routers import workspace_routes
+from .routers import history_routes
+from .routers import auth_routes
+from .routers import admin_routes
 
 app = FastAPI()
 
@@ -21,90 +20,22 @@ STATIC_DIR = os.path.join(BASE_DIR, "static")
 TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")
 
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
-templates = Jinja2Templates(directory=TEMPLATE_DIR)
 
-# --------------------------------------------------
-# Create Tables (lightweight)
-# --------------------------------------------------
+templates = Jinja2Templates(directory=TEMPLATE_DIR)
 
 Base.metadata.create_all(bind=engine)
 
-# --------------------------------------------------
-# Non-blocking Initial Data Setup
-# --------------------------------------------------
+app.include_router(workspace_routes.router)
+app.include_router(history_routes.router)
+app.include_router(auth_routes.router)
+app.include_router(admin_routes.router)
 
-def init_data_background():
-    db = SessionLocal()
-    try:
-        # Create Free Plan
-        free_plan = db.query(Plan).filter(Plan.name == "Free").first()
-        if not free_plan:
-            free_plan = Plan(name="Free", credits=10)
-            db.add(free_plan)
-            db.commit()
-            db.refresh(free_plan)
-
-        # Create Admin
-        admin = db.query(User).filter(User.role == "admin").first()
-        if not admin:
-            admin_email = os.getenv("ADMIN_EMAIL")
-            admin_password = os.getenv("ADMIN_PASSWORD")
-
-            if admin_email and admin_password:
-                hashed_password = get_password_hash(admin_password)
-
-                new_admin = User(
-                    email=admin_email,
-                    hashed_password=hashed_password,
-                    role="admin",
-                    credits=9999,
-                    plan_id=free_plan.id
-                )
-                db.add(new_admin)
-                db.commit()
-
-    except Exception as e:
-        print("Init error:", e)
-
-    finally:
-        db.close()
-
-# --------------------------------------------------
-# Startup Event (NON-BLOCKING)
-# --------------------------------------------------
 
 @app.on_event("startup")
-def startup_event():
-    # Run DB initialization in background thread
-    threading.Thread(target=init_data_background).start()
+def start_queue_worker():
 
-# --------------------------------------------------
-# Health Check (Important for Render)
-# --------------------------------------------------
+    thread = threading.Thread(target=process_queue)
 
-@app.get("/health")
-def health():
-    return {"status": "ok"}
+    thread.daemon = True
 
-# --------------------------------------------------
-# Routes
-# --------------------------------------------------
-
-@app.get("/", response_class=HTMLResponse)
-def home(request: Request):
-    return templates.TemplateResponse(
-        "dashboard.html",
-        {"request": request}
-    )
-
-@app.get("/admin", response_class=HTMLResponse)
-def admin_panel(request: Request):
-    return templates.TemplateResponse(
-        "admin.html",
-        {"request": request}
-    )
-
-
-
-
-
+    thread.start()
