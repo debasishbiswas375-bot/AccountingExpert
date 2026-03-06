@@ -1,12 +1,41 @@
-@app.get("/", response_class=HTMLResponse)
-def dashboard(
-    request: Request,
-    user = Depends(get_current_user)
-):
-    return templates.TemplateResponse(
-        "dashboard.html",
-        {
-            "request": request,
-            "user": user
-        }
-    )
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="dashboard">
+
+<h1>Dashboard</h1>
+
+<p>Welcome to Accounting Expert Enterprise UI</p>
+
+<div class="card-container">
+
+<div class="card">
+
+<h3>Remaining Credits</h3>
+
+<p>{{ credits if credits else "Guest Mode" }}</p>
+
+</div>
+
+<div class="card">
+
+<h3>Converted Vouchers</h3>
+
+<p>{{ conversions if conversions else "0" }}</p>
+
+</div>
+
+<div class="card">
+
+<h3>Plan</h3>
+
+<p>{{ plan if plan else "Free / Guest" }}</p>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}
