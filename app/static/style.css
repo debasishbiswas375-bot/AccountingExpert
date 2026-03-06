@@ -9,7 +9,7 @@ body{
     overflow-x:hidden;
 }
 
-/* Watermark pattern */
+/* Watermark */
 body::before{
     content:"";
     position:fixed;
@@ -38,7 +38,7 @@ body::before{
 }
 
 .brand-logo{
-    height:55px;
+    height:65px;   /* slightly bigger */
 }
 
 .brand-text{
@@ -71,6 +71,42 @@ body::before{
     align-items:center;
     justify-content:center;
     font-weight:bold;
+    cursor:pointer;
+}
+
+/* ================= PROFILE MENU ================= */
+
+.avatar-container{
+    position:relative;
+}
+
+.profile-menu{
+    position:absolute;
+    top:60px;
+    right:0;
+    background:rgba(255,255,255,0.2);
+    backdrop-filter:blur(20px);
+    border-radius:14px;
+    padding:10px 0;
+    width:150px;
+    display:none;
+    flex-direction:column;
+    box-shadow:0 10px 30px rgba(0,0,0,0.25);
+}
+
+.profile-menu a{
+    padding:10px 15px;
+    color:white;
+    text-decoration:none;
+    font-size:14px;
+}
+
+.profile-menu a:hover{
+    background:rgba(255,255,255,0.25);
+}
+
+.profile-menu.show{
+    display:flex;
 }
 
 /* ================= FLOATING GLASS SIDEBAR ================= */
@@ -81,7 +117,6 @@ body::before{
     left:40px;
     width:260px;
     height:75vh;
-
     padding:30px 20px;
 
     display:flex;
@@ -101,7 +136,7 @@ body::before{
     transition:all 0.3s ease;
 }
 
-/* NAVIGATION */
+/* Navigation */
 
 .nav-section{
     display:flex;
@@ -130,7 +165,6 @@ body::before{
     height:20px;
 }
 
-/* Remove purple links */
 a{
     text-decoration:none;
     color:inherit;
@@ -145,7 +179,6 @@ a{
 .sponsor-title{
     font-size:12px;
     margin-bottom:6px;
-    opacity:0.9;
 }
 
 .sponsor-name{
@@ -155,7 +188,7 @@ a{
 }
 
 .sponsor-logo{
-    width:90px;
+    width:75px;   /* slightly smaller */
     max-width:100%;
 }
 
