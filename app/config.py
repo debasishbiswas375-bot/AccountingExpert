@@ -1,0 +1,8 @@
+import os
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
