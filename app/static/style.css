@@ -6,32 +6,22 @@ body{
     margin:0;
     font-family:'Segoe UI',sans-serif;
     color:#ffffff;
-    overflow-x:hidden;
+    background:linear-gradient(135deg,#6bb6ff 0%,#3d8bfd 45%,#1f56c2 100%);
     position:relative;
-
-    background: linear-gradient(
-        135deg,
-        #6bb6ff 0%,
-        #3d8bfd 45%,
-        #1f56c2 100%
-    );
+    overflow-x:hidden;
 }
 
-/* Watermark logo lined repeat */
+/* Watermark pattern */
 body::before{
     content:"";
     position:fixed;
     inset:0;
-
-    background-image:url("logo.png");
-    background-repeat:repeat;
+    background:url("logo.png") repeat;
     background-size:65px;
-
-    opacity:0.035;
+    opacity:0.07; /* requested */
     filter:grayscale(100%);
     pointer-events:none;
 }
-
 
 /* ==============================
    TOPBAR
@@ -45,37 +35,32 @@ body::before{
     padding:0 50px;
 }
 
-.left-section{
+.left{
     display:flex;
     align-items:center;
     gap:15px;
 }
 
-.main-logo{
-    height:55px;
+.top-logo{
+    height:50px;
 }
 
-.brand-block{
+.brand{
     display:flex;
     flex-direction:column;
 }
 
-.brand-text{
+.brand-name{
     font-size:22px;
     font-weight:700;
 }
 
 .tagline{
     font-size:12px;
-    opacity:0.8;
+    opacity:0.85;
 }
 
-
-/* ==============================
-   RIGHT SECTION
-============================== */
-
-.right-section{
+.right{
     display:flex;
     align-items:center;
     gap:20px;
@@ -92,7 +77,6 @@ body::before{
     font-weight:bold;
 }
 
-
 /* ==============================
    FULL HEIGHT GLASS SIDEBAR
 ============================== */
@@ -101,7 +85,7 @@ body::before{
     position:fixed;
     top:0;
     left:0;
-    width:280px;
+    width:270px;
     height:100vh;
 
     display:flex;
@@ -110,41 +94,30 @@ body::before{
 
     padding:120px 25px 40px 25px;
 
-    background:linear-gradient(
-        180deg,
-        rgba(255,255,255,0.30),
-        rgba(255,255,255,0.08)
-    );
-
-    backdrop-filter:blur(28px);
-    -webkit-backdrop-filter:blur(28px);
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(25px);
+    -webkit-backdrop-filter:blur(25px);
 
     border-right:1px solid rgba(255,255,255,0.25);
-
-    box-shadow:
-        inset 0 0 25px rgba(255,255,255,0.3),
-        0 0 60px rgba(0,0,0,0.2);
-
-    transition:0.3s ease;
 }
-
 
 /* MENU */
 
-.menu-section{
+.menu{
     display:flex;
     flex-direction:column;
-    gap:14px;
+    gap:15px;
 }
 
 .nav-item{
     display:flex;
     align-items:center;
-    gap:15px;
-    padding:14px 18px;
-    border-radius:18px;
+    gap:12px;
+    padding:14px 16px;
+    border-radius:16px;
     text-decoration:none;
     color:white;
+    font-weight:500;
     transition:0.2s;
 }
 
@@ -152,37 +125,38 @@ body::before{
     background:rgba(255,255,255,0.2);
 }
 
+/* Remove default link styling */
+a{
+    text-decoration:none;
+    color:inherit;
+}
 
 /* ==============================
-   SPONSOR SECTION
+   SPONSOR
 ============================== */
 
 .sponsor{
     text-align:center;
-    font-size:13px;
-    opacity:0.9;
 }
 
-.sponsor span{
-    display:block;
-    margin-bottom:15px;
+.sponsor-text{
+    font-size:13px;
+    margin-bottom:12px;
 }
 
 .sponsor-logo{
-    width:180px;
-    opacity:0.9;
+    width:140px;
+    max-width:100%;
 }
-
 
 /* ==============================
    MAIN CONTENT
 ============================== */
 
 .main{
-    margin-left:310px;
+    margin-left:300px;
     padding:130px 70px;
 }
-
 
 /* ==============================
    MINI MODE
@@ -199,7 +173,6 @@ body::before{
 .sidebar.mini ~ .main{
     margin-left:130px;
 }
-
 
 /* ==============================
    HAMBURGER
@@ -219,7 +192,6 @@ body::before{
     height:2px;
     background:white;
 }
-
 
 /* ==============================
    MOBILE
