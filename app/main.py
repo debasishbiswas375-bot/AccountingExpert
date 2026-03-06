@@ -1,7 +1,8 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends
+from fastapi.responses import HTMLResponse
+from .auth_middleware import get_current_user, require_adminfrom fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
 import os
 import threading
 
@@ -103,3 +104,4 @@ def admin_panel(request: Request):
         "admin.html",
         {"request": request}
     )
+
