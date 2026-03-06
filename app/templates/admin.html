@@ -1,6 +1,12 @@
-{% extends "base.html" %}
-
-{% block content %}
-<h1>Admin Panel</h1>
-<p>Manage users and permissions here.</p>
-{% endblock %}
+@app.get("/admin", response_class=HTMLResponse)
+def admin_panel(
+    request: Request,
+    user = Depends(require_admin)
+):
+    return templates.TemplateResponse(
+        "admin.html",
+        {
+            "request": request,
+            "user": user
+        }
+    )
