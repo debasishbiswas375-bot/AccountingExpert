@@ -1,13 +1,9 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, DateTime, Float, Text
 from sqlalchemy.orm import relationship
 from datetime import datetime
-
 from .database import Base
 
 
-# -----------------------------
-# PLANS TABLE
-# -----------------------------
 class Plan(Base):
     __tablename__ = "plans"
 
@@ -21,9 +17,6 @@ class Plan(Base):
     users = relationship("User", back_populates="plan")
 
 
-# -----------------------------
-# USERS TABLE
-# -----------------------------
 class User(Base):
     __tablename__ = "users"
 
@@ -31,7 +24,7 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=True)
 
-    role = Column(String, default="user")  # user | co_admin | admin
+    role = Column(String, default="user")
     credits = Column(Integer, default=0)
 
     address = Column(String, nullable=True)
@@ -49,17 +42,14 @@ class User(Base):
     logs = relationship("UserLog", back_populates="user")
 
 
-# -----------------------------
-# USER LOGS TABLE
-# -----------------------------
 class UserLog(Base):
     __tablename__ = "user_logs"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
 
     action = Column(String, nullable=False)
-    metadata = Column(Text, nullable=True)
+    details = Column(Text, nullable=True)
 
     created_at = Column(DateTime, default=datetime.utcnow)
 
