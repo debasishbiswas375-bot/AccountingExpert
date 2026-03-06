@@ -3,41 +3,52 @@
 <head>
     <title>accountesy</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <link rel="shortcut icon" href="/static/logo.png">
+
     <link rel="stylesheet" href="/static/style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
 <body>
 
-<!-- TOPBAR -->
+<!-- ================= TOPBAR ================= -->
+
 <div class="topbar">
 
-    <div class="left">
+    <div class="top-left">
+
         <button class="hamburger" onclick="toggleSidebar()">
             <span></span>
             <span></span>
             <span></span>
         </button>
 
-        <img src="/static/logo.png" class="top-logo">
+        <img src="/static/logo.png" class="brand-logo">
 
-        <div class="brand">
+        <div class="brand-text">
             <div class="brand-name">accountesy</div>
-            <div class="tagline">learn smart, grow fast, be accounting expert</div>
+            <div class="brand-tagline">
+                learn smart, grow fast, be accounting expert
+            </div>
         </div>
+
     </div>
 
-    <div class="right">
+    <div class="top-right">
         <i data-lucide="bell"></i>
         <div class="avatar">D</div>
     </div>
 
 </div>
 
-<!-- SIDEBAR -->
+<!-- ================= SIDEBAR ================= -->
+
 <div class="sidebar" id="sidebar">
 
-    <div class="menu">
+    <div class="nav-section">
 
         <a href="/" class="nav-item">
             <i data-lucide="layout-dashboard"></i>
@@ -61,14 +72,19 @@
 
     </div>
 
-    <div class="sponsor">
-        <div class="sponsor-text">Sponsored by</div>
-        <img src="/static/logo.png" class="sponsor-logo">
+    <!-- SPONSOR SECTION -->
+    <div class="sponsor-box">
+        <div class="sponsor-title">Sponsored by</div>
+        <div class="sponsor-name">
+            Uday Mondal | Tax Consultant Advocate
+        </div>
+        <img src="/static/logo1.png" class="sponsor-logo">
     </div>
 
 </div>
 
-<!-- MAIN CONTENT -->
+<!-- ================= MAIN CONTENT ================= -->
+
 <div class="main">
     {% block content %}{% endblock %}
 </div>
