@@ -1,6 +1,12 @@
-{% extends "base.html" %}
-
-{% block content %}
-<h1>Dashboard</h1>
-<p>Welcome to Accounting Expert Enterprise UI</p>
-{% endblock %}
+@app.get("/", response_class=HTMLResponse)
+def dashboard(
+    request: Request,
+    user = Depends(get_current_user)
+):
+    return templates.TemplateResponse(
+        "dashboard.html",
+        {
+            "request": request,
+            "user": user
+        }
+    )
