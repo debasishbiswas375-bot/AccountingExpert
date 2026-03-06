@@ -6,7 +6,6 @@
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/static/logo.png">
-    <link rel="shortcut icon" href="/static/logo.png">
 
     <link rel="stylesheet" href="/static/style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -19,7 +18,6 @@
 <div class="topbar">
 
     <div class="top-left">
-
         <button class="hamburger" onclick="toggleSidebar()">
             <span></span>
             <span></span>
@@ -34,7 +32,6 @@
                 learn smart, grow fast, be accounting expert
             </div>
         </div>
-
     </div>
 
     <div class="top-right">
@@ -44,7 +41,7 @@
 
 </div>
 
-<!-- ================= SIDEBAR ================= -->
+<!-- ================= FLOATING SIDEBAR ================= -->
 
 <div class="sidebar" id="sidebar">
 
@@ -72,7 +69,7 @@
 
     </div>
 
-    <!-- SPONSOR SECTION -->
+    <!-- Sponsor -->
     <div class="sponsor-box">
         <div class="sponsor-title">Sponsored by</div>
         <div class="sponsor-name">
@@ -83,7 +80,7 @@
 
 </div>
 
-<!-- ================= MAIN CONTENT ================= -->
+<!-- ================= MAIN ================= -->
 
 <div class="main">
     {% block content %}{% endblock %}
