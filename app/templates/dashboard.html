@@ -2,39 +2,32 @@
 
 {% block content %}
 
-<div class="dashboard">
-
-<h1>Dashboard</h1>
-
-<p>Welcome to Accounting Expert Enterprise UI</p>
-
-<div class="card-container">
-
-<div class="card">
-
-<h3>Remaining Credits</h3>
-
-<p>{{ credits if credits else "Guest Mode" }}</p>
-
+<div class="page-title">
+    Dashboard
 </div>
 
-<div class="card">
+<div class="dashboard-cards">
 
-<h3>Converted Vouchers</h3>
+    <div class="card">
+        <div class="card-title">Remaining Credits</div>
+        <div class="card-value">
+            {{ credits if credits else "Guest Mode" }}
+        </div>
+    </div>
 
-<p>{{ conversions if conversions else "0" }}</p>
+    <div class="card">
+        <div class="card-title">Converted Vouchers</div>
+        <div class="card-value">
+            {{ conversions if conversions else "0" }}
+        </div>
+    </div>
 
-</div>
-
-<div class="card">
-
-<h3>Plan</h3>
-
-<p>{{ plan if plan else "Free / Guest" }}</p>
-
-</div>
-
-</div>
+    <div class="card">
+        <div class="card-title">Current Plan</div>
+        <div class="card-value">
+            {{ plan if plan else "Free / Guest" }}
+        </div>
+    </div>
 
 </div>
 
