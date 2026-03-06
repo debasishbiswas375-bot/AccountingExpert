@@ -9,14 +9,14 @@ body{
     overflow-x:hidden;
 }
 
-/* Background watermark pattern */
+/* Watermark pattern */
 body::before{
     content:"";
     position:fixed;
     inset:0;
     background:url("logo.png") repeat;
     background-size:70px;
-    opacity:0.07; /* requested */
+    opacity:0.07;
     filter:grayscale(100%);
     pointer-events:none;
 }
@@ -28,7 +28,7 @@ body::before{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    padding:0 50px;
+    padding:0 60px;
 }
 
 .top-left{
@@ -73,29 +73,35 @@ body::before{
     font-weight:bold;
 }
 
-/* ================= SIDEBAR ================= */
+/* ================= FLOATING GLASS SIDEBAR ================= */
 
 .sidebar{
     position:fixed;
-    top:0;
-    left:0;
-    width:280px;
-    height:100vh;
+    top:110px;
+    left:40px;
+    width:260px;
+    height:75vh;
 
-    padding:120px 25px 40px 25px;
+    padding:30px 20px;
 
     display:flex;
     flex-direction:column;
     justify-content:space-between;
 
-    background:rgba(255,255,255,0.15);
+    background:rgba(255,255,255,0.18);
     backdrop-filter:blur(30px);
     -webkit-backdrop-filter:blur(30px);
 
-    border-right:1px solid rgba(255,255,255,0.25);
+    border-radius:28px;
+
+    box-shadow:
+        0 20px 50px rgba(0,0,0,0.25),
+        inset 0 0 20px rgba(255,255,255,0.15);
+
+    transition:all 0.3s ease;
 }
 
-/* Navigation */
+/* NAVIGATION */
 
 .nav-section{
     display:flex;
@@ -115,16 +121,16 @@ body::before{
     transition:0.2s;
 }
 
+.nav-item:hover{
+    background:rgba(255,255,255,0.25);
+}
+
 .nav-item i{
     width:20px;
     height:20px;
 }
 
-.nav-item:hover{
-    background:rgba(255,255,255,0.25);
-}
-
-/* Remove default link styles */
+/* Remove purple links */
 a{
     text-decoration:none;
     color:inherit;
@@ -137,40 +143,51 @@ a{
 }
 
 .sponsor-title{
-    font-size:13px;
+    font-size:12px;
     margin-bottom:6px;
+    opacity:0.9;
 }
 
 .sponsor-name{
-    font-size:14px;
+    font-size:13px;
     font-weight:600;
-    margin-bottom:10px;
+    margin-bottom:8px;
 }
 
 .sponsor-logo{
-    width:140px;
+    width:90px;
     max-width:100%;
 }
 
 /* ================= MAIN ================= */
 
 .main{
-    margin-left:310px;
-    padding:140px 70px;
+    margin-left:340px;
+    padding:150px 80px;
 }
 
 /* ================= MINI MODE ================= */
 
 .sidebar.mini{
-    width:95px;
+    width:90px;
+    padding:30px 10px;
 }
 
 .sidebar.mini span{
     display:none;
 }
 
+.sidebar.mini .sponsor-name,
+.sidebar.mini .sponsor-title{
+    display:none;
+}
+
+.sidebar.mini .sponsor-logo{
+    width:50px;
+}
+
 .sidebar.mini ~ .main{
-    margin-left:130px;
+    margin-left:180px;
 }
 
 /* ================= HAMBURGER ================= */
@@ -195,11 +212,15 @@ a{
 @media(max-width:768px){
 
     .sidebar{
-        width:95px;
-        padding:120px 15px 30px 15px;
+        left:15px;
+        top:100px;
+        width:85px;
+        height:70vh;
     }
 
-    .sidebar span{
+    .sidebar span,
+    .sponsor-name,
+    .sponsor-title{
         display:none;
     }
 
