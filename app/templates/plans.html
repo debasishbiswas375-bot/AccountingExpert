@@ -1,11 +1,29 @@
-﻿{% extends "base.html" %}
-{% block content %}
-<h2>Plans</h2>
-{% for plan in plans %}
-<div>
-<h3>{{ plan.name }}</h3>
-<p>Credits: {{ plan.credits }}</p>
-</div>
-{% endfor %}
-{% endblock %}
+{% extends "base.html" %}
 
+{% block content %}
+
+<h1>Plans</h1>
+
+<div class="plan-container">
+
+{% for plan in plans %}
+
+<div class="plan-card">
+
+<h2>{{ plan.name }}</h2>
+
+<p>Credits: {{ plan.credits }}</p>
+
+<p>Price: ₹{{ plan.price }}</p>
+
+<p>Duration: {{ plan.duration_days }} days</p>
+
+<button>Buy Plan</button>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}
