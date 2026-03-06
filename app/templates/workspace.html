@@ -2,16 +2,24 @@
 
 {% block content %}
 
-<h1>Workspace</h1>
+<div class="page-title">Voucher Converter Workspace</div>
+
+<div class="workspace-box">
 
 <form action="/convert" method="post" enctype="multipart/form-data">
 
-<input type="file" name="file">
+<input type="file" name="file" required>
 
-<button type="submit">Convert</button>
+<button class="convert-btn">
+Convert Statement
+</button>
 
 </form>
 
-<p>1 conversion = 0.1 credit</p>
+<p class="note">
+1 Convert = 0.1 Credit
+</p>
+
+</div>
 
 {% endblock %}
