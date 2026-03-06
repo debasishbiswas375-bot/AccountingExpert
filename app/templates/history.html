@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Conversion History</h1>
+
+<table>
+
+<tr>
+
+<th>Date</th>
+
+<th>Voucher Count</th>
+
+<th>Credits Used</th>
+
+</tr>
+
+{% for record in records %}
+
+<tr>
+
+<td>{{ record.converted_date }}</td>
+
+<td>{{ record.voucher_count }}</td>
+
+<td>{{ record.credits_used }}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+{% endblock %}
