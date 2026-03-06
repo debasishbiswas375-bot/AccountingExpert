@@ -1,40 +1,48 @@
 /* ==============================
-   GLOBAL SKY BACKGROUND
+   GLOBAL BACKGROUND
 ============================== */
 
 body{
     margin:0;
     font-family:'Segoe UI',sans-serif;
-    background: radial-gradient(circle at 15% 10%, #a8d4ff, #3c8dff 60%, #1f56c2 100%);
     color:#ffffff;
     overflow-x:hidden;
     position:relative;
+
+    background: linear-gradient(
+        135deg,
+        #6bb6ff 0%,
+        #3d8bfd 45%,
+        #1f56c2 100%
+    );
 }
 
-/* Subtle logo watermark */
+/* Watermark logo lined repeat */
 body::before{
     content:"";
     position:fixed;
     inset:0;
-    background:url("logo.png");
-    background-size:50px;
+
+    background-image:url("logo.png");
     background-repeat:repeat;
-    opacity:0.03;
+    background-size:65px;
+
+    opacity:0.035;
     filter:grayscale(100%);
     pointer-events:none;
 }
 
+
 /* ==============================
-   TOPBAR (TRANSPARENT)
+   TOPBAR
 ============================== */
 
 .topbar{
-    height:75px;
+    height:85px;
     display:flex;
     justify-content:space-between;
     align-items:center;
-    padding:0 40px;
-    background:transparent;
+    padding:0 50px;
 }
 
 .left-section{
@@ -43,131 +51,155 @@ body::before{
     gap:15px;
 }
 
-.logo-img{
-    height:38px;
+.main-logo{
+    height:55px;
 }
 
-.logo-text{
-    font-size:18px;
-    font-weight:600;
+.brand-block{
+    display:flex;
+    flex-direction:column;
 }
 
-.plan-badge{
-    background:#ffffff20;
-    backdrop-filter:blur(10px);
-    padding:4px 14px;
-    border-radius:20px;
+.brand-text{
+    font-size:22px;
+    font-weight:700;
+}
+
+.tagline{
     font-size:12px;
+    opacity:0.8;
 }
 
-.top-right{
+
+/* ==============================
+   RIGHT SECTION
+============================== */
+
+.right-section{
     display:flex;
     align-items:center;
     gap:20px;
 }
 
 .avatar{
-    width:40px;
-    height:40px;
+    width:45px;
+    height:45px;
     border-radius:50%;
-    background:linear-gradient(145deg,#ffffff80,#ffffff30);
+    background:rgba(255,255,255,0.25);
     display:flex;
     align-items:center;
     justify-content:center;
     font-weight:bold;
-    backdrop-filter:blur(10px);
 }
 
+
 /* ==============================
-   REAL SOAP BUBBLE SIDEBAR
+   FULL HEIGHT GLASS SIDEBAR
 ============================== */
 
 .sidebar{
     position:fixed;
-    top:90px;
-    left:30px;
-    width:240px;
-    padding:25px;
-    border-radius:30px;
+    top:0;
+    left:0;
+    width:280px;
+    height:100vh;
 
-    background: linear-gradient(
-        145deg,
-        rgba(255,255,255,0.25),
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+
+    padding:120px 25px 40px 25px;
+
+    background:linear-gradient(
+        180deg,
+        rgba(255,255,255,0.30),
         rgba(255,255,255,0.08)
     );
 
-    backdrop-filter: blur(35px);
-    -webkit-backdrop-filter: blur(35px);
+    backdrop-filter:blur(28px);
+    -webkit-backdrop-filter:blur(28px);
+
+    border-right:1px solid rgba(255,255,255,0.25);
 
     box-shadow:
-        inset 0 0 25px rgba(255,255,255,0.4),
-        inset 0 0 60px rgba(255,255,255,0.15),
-        0 15px 45px rgba(0,0,0,0.25);
+        inset 0 0 25px rgba(255,255,255,0.3),
+        0 0 60px rgba(0,0,0,0.2);
 
     transition:0.3s ease;
 }
 
-/* Light reflection layer */
-.sidebar::before{
-    content:"";
-    position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:60%;
-    border-radius:30px;
-    background:linear-gradient(
-        to bottom,
-        rgba(255,255,255,0.5),
-        transparent
-    );
-    opacity:0.25;
-    pointer-events:none;
+
+/* MENU */
+
+.menu-section{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
 }
 
-/* Menu items */
-
-.item{
+.nav-item{
     display:flex;
     align-items:center;
     gap:15px;
-    padding:12px 15px;
+    padding:14px 18px;
     border-radius:18px;
     text-decoration:none;
     color:white;
-    transition:0.2s ease;
+    transition:0.2s;
 }
 
-.item:hover{
+.nav-item:hover{
     background:rgba(255,255,255,0.2);
 }
 
-.item i{
-    width:20px;
+
+/* ==============================
+   SPONSOR SECTION
+============================== */
+
+.sponsor{
+    text-align:center;
+    font-size:13px;
+    opacity:0.9;
 }
 
-/* MINI MODE */
-
-.sidebar.mini{
-    width:85px;
+.sponsor span{
+    display:block;
+    margin-bottom:15px;
 }
 
-.sidebar.mini span{
-    display:none;
+.sponsor-logo{
+    width:180px;
+    opacity:0.9;
 }
+
 
 /* ==============================
    MAIN CONTENT
 ============================== */
 
 .main{
-    margin-left:320px;
-    padding:120px 50px;
+    margin-left:310px;
+    padding:130px 70px;
+}
+
+
+/* ==============================
+   MINI MODE
+============================== */
+
+.sidebar.mini{
+    width:95px;
+}
+
+.sidebar.mini span{
+    display:none;
 }
 
 .sidebar.mini ~ .main{
-    margin-left:150px;
+    margin-left:130px;
 }
+
 
 /* ==============================
    HAMBURGER
@@ -183,20 +215,21 @@ body::before{
 }
 
 .hamburger span{
-    width:22px;
+    width:24px;
     height:2px;
     background:white;
 }
 
+
 /* ==============================
-   MOBILE VERSION
+   MOBILE
 ============================== */
 
 @media(max-width:768px){
 
     .sidebar{
-        width:85px;
-        left:15px;
+        width:95px;
+        padding:120px 15px 30px 15px;
     }
 
     .sidebar span{
@@ -204,7 +237,7 @@ body::before{
     }
 
     .main{
-        margin-left:140px;
+        margin-left:130px;
         padding:120px 25px;
     }
 }
