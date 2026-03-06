@@ -12,7 +12,7 @@ body::before{
     content:"";
     position:fixed;
     inset:0;
-    background:url("logo.png") repeat;
+    background:url("b-logo.png") repeat;
     background-size:50px;
     opacity:0.07;
     filter:grayscale(100%);
@@ -36,17 +36,17 @@ body::before{
 }
 
 .brand-logo{
-    height:65px;
+    height:75px;
 }
 
 .brand-name{
-    font-size:24px;
+    font-size:28px;
     font-weight:700;
     letter-spacing:0.5px;
 }
 
 .brand-tagline{
-    font-size:13px;
+    font-size:15px;
     font-weight:500;
     opacity:0.95;
 }
@@ -116,17 +116,17 @@ body::before{
 }
 
 .sponsor-title{
-    font-size:12px;
+    font-size:10px;
 }
 
 .sponsor-name{
-    font-size:13px;
+    font-size:15px;
     font-weight:600;
     margin:6px 0;
 }
 
 .sponsor-logo{
-    width:75px;
+    width:55px;
 }
 
 /* ================= MAIN ================= */
@@ -139,7 +139,7 @@ body::before{
 /* ================= MINI MODE ================= */
 
 .sidebar.mini{
-    width:90px;
+    width:80px;
     padding:30px 10px;
 }
 
@@ -268,4 +268,5 @@ body::before{
 .notif-item:hover{
     background:rgba(255,255,255,0.25);
 }
+
 
