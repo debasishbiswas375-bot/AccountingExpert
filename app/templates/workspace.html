@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Workspace</h1>
+
+<form action="/convert" method="post" enctype="multipart/form-data">
+
+<input type="file" name="file">
+
+<button type="submit">Convert</button>
+
+</form>
+
+<p>1 conversion = 0.1 credit</p>
+
+{% endblock %}
