@@ -1,13 +1,11 @@
-from .auth_middleware import get_current_user, require_adminfrom fastapi import FastAPI, Request
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-import os
-import threading
 
-from .database import engine, SessionLocal, Base
-from .models import User, Plan
-from .auth import get_password_hash
+from .database import engine
+from .models import Base
+from .auth_middleware import get_current_user, require_admin
 
 # --------------------------------------------------
 # App Init
@@ -103,5 +101,6 @@ def admin_panel(request: Request):
         "admin.html",
         {"request": request}
     )
+
 
 
