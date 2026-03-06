@@ -1,12 +1,31 @@
-@app.get("/admin", response_class=HTMLResponse)
-def admin_panel(
-    request: Request,
-    user = Depends(require_admin)
-):
-    return templates.TemplateResponse(
-        "admin.html",
-        {
-            "request": request,
-            "user": user
-        }
-    )
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Admin Panel</h1>
+
+<div class="admin-cards">
+
+<div class="card">
+<h3>Total Users</h3>
+<p>{{ total_users }}</p>
+</div>
+
+<div class="card">
+<h3>Total Conversions</h3>
+<p>{{ total_conversions }}</p>
+</div>
+
+<div class="card">
+<h3>Total Plans</h3>
+<p>{{ total_plans }}</p>
+</div>
+
+<div class="card">
+<h3>Credits Used</h3>
+<p>{{ credits_used }}</p>
+</div>
+
+</div>
+
+{% endblock %}
