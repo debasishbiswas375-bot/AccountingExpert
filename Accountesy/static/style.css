@@ -2,20 +2,18 @@ body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
     color: white;
-    /* RESTORED: Original Blue Gradient */
     background: linear-gradient(135deg, #6bb6ff 0%, #3d8bfd 50%, #1f56c2 100%);
     position: relative;
     overflow-x: hidden;
     min-height: 100vh;
 }
 
-/* RESTORED: Watermark Background */
+/* Watermark: Fixed Path for Render */
 body::before {
     content: "";
     position: fixed;
     inset: 0;
-    /* FIXED PATH: Points to your logo in the static folder */
-    background: url("/static/b-logo.png") repeat;
+    background: url("/static/b-logo.png") repeat; /* Fixed Path */
     background-size: 60px;
     opacity: 0.07;
     filter: grayscale(90%);
@@ -23,13 +21,24 @@ body::before {
     z-index: -1;
 }
 
-/* RESTORED: Glassmorphism Sidebar */
+/* TOPBAR: 50px lined alignment */
+.topbar {
+    height: 90px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 60px;
+    background: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+/* SIDEBAR & MINI TOGGLE */
 .sidebar {
     position: fixed;
     top: 110px;
     left: 40px;
     width: 260px;
-    height: calc(100vh - 150px);
+    height: 75vh;
     padding: 30px 20px;
     display: flex;
     flex-direction: column;
@@ -38,18 +47,18 @@ body::before {
     backdrop-filter: blur(30px);
     border-radius: 28px;
     box-shadow: 0 20px 50px rgba(0,0,0,0.25), inset 0 0 20px rgba(255,255,255,0.15);
-    z-index: 100;
+    transition: all 0.3s ease;
 }
 
-/* RESTORED: Topbar & Right-side Elements */
-.topbar {
-    height: 90px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 60px;
+.sidebar.mini {
+    width: 80px;
 }
 
+.sidebar.mini .nav-text, .sidebar.mini .sponsor-name, .sidebar.mini .sponsor-title {
+    display: none;
+}
+
+/* AVATAR & NOTIFICATIONS */
 .avatar {
     width: 45px;
     height: 45px;
@@ -60,7 +69,7 @@ body::before {
     justify-content: center;
     font-weight: bold;
     cursor: pointer;
-    border: 1px solid rgba(255,255,255,0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .notif-dot {
@@ -75,25 +84,10 @@ body::before {
 
 .main {
     margin-left: 340px;
-    padding: 120px 50px 50px 50px;
+    padding: 50px;
+    transition: all 0.3s ease;
 }
 
-.nav-item {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 14px 16px;
-    border-radius: 16px;
-    text-decoration: none;
-    color: white;
-    font-weight: 500;
-    transition: 0.2s;
+.sidebar.mini ~ .main {
+    margin-left: 160px;
 }
-
-.nav-item:hover {
-    background: rgba(255, 255, 255, 0.25);
-}
-
-/* Sponsor Styling */
-.sponsor-logo { width: 80px; margin-top: 10px; border-radius: 8px; }
-
