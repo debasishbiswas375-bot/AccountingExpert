@@ -1,19 +1,12 @@
 from fastapi import APIRouter, UploadFile, File
-from app.parser import parse_bank_statement
-from app.ai_ledger import detect_ledger
+from app.services.parser import parse_excel
 
 router = APIRouter()
 
 @router.post("/convert")
+
 async def convert(file: UploadFile = File(...)):
-    txs = parse_bank_statement(file.file)
-    vouchers=[]
-    for tx in txs:
-        ledger = detect_ledger(tx["narration"])
-        vouchers.append({
-            "date":tx["date"],
-            "narration":tx["narration"],
-            "ledger":ledger,
-            "amount":tx["debit"] or tx["credit"]
-        })
+
+    vouchers = parse_excel(file.file)
+
     return {"vouchers":vouchers}
