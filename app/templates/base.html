@@ -1,255 +1,37 @@
-<!DOCTYPE html>
-<html>
+<div class="sidebar">
 
-<head>
+    <div class="logo">
+        <img src="/static/logo.png">
+        <span>Accountesy</span>
+    </div>
 
-<title>{{ title if title else "Accountesy – Accounting Expert" }}</title>
+    <ul class="menu">
+        <li><a href="/">Landing</a></li>
+        <li><a href="/features">Features</a></li>
+        <li><a href="/pricing">Pricing</a></li>
+        <li><a href="/dashboard">Dashboard</a></li>
+        <li><a href="/workspace">Workspace</a></li>
+        <li><a href="/history">History</a></li>
+        <li><a href="/suggestions">Suggestions</a></li>
+    </ul>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <div class="sponsor">
+        Sponsored by<br>
+        <b>Uday Mondal</b><br>
+        Tax Consultant Advocate
+    </div>
 
-<link rel="icon" type="image/png" href="/static/logo.png">
+</div>
 
-<!-- Google Font -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="/static/style.css">
-
-<script src="https://unpkg.com/lucide@latest"></script>
-
-</head>
-
-<body>
-
-
-<!-- ================= TOPBAR ================= -->
 
 <div class="topbar">
 
-<div class="top-left">
+    <div class="notifications">
+        🔔
+    </div>
 
-<button class="hamburger" onclick="toggleSidebar()">
-
-<span></span>
-<span></span>
-<span></span>
-
-</button>
-
-<img src="/static/logo.png" class="brand-logo">
-
-<div class="brand-text">
-
-<div class="brand-name">
-Accountesy
-</div>
-
-<div class="brand-tagline">
-Learn Smart, Grow Fast, Be Accounting Expert with Accountesy
-</div>
+    <div class="user">
+        <img src="/static/user.png" class="avatar">
+    </div>
 
 </div>
-
-</div>
-
-
-<div class="top-right">
-
-<!-- Notifications -->
-
-<div class="notification-container">
-
-<div class="notification-icon" onclick="toggleNotification()">
-
-<i data-lucide="bell"></i>
-
-{% if notifications and notifications|length > 0 %}
-<span class="notif-dot"></span>
-{% endif %}
-
-</div>
-
-<div class="notification-menu" id="notificationMenu">
-
-<div class="notif-title">Notifications</div>
-
-{% if notifications %}
-
-{% for n in notifications %}
-
-<div class="notif-item">
-{{ n.message }}
-</div>
-
-{% endfor %}
-
-{% else %}
-
-<div class="notif-item">
-No notifications
-</div>
-
-{% endif %}
-
-</div>
-
-</div>
-
-
-<!-- Avatar -->
-
-<div class="avatar-container">
-
-<div class="avatar" onclick="toggleProfileMenu()">
-
-{% if user %}
-{{ user.username[0] }}
-{% else %}
-G
-{% endif %}
-
-</div>
-
-
-<div class="profile-menu" id="profileMenu">
-
-{% if user %}
-
-<a href="/account">My Account</a>
-<a href="/settings">Settings</a>
-<a href="/logout">Logout</a>
-
-{% else %}
-
-<a href="/login">Login</a>
-<a href="/register">Register</a>
-
-{% endif %}
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- ================= SIDEBAR ================= -->
-
-<div class="sidebar" id="sidebar">
-
-<div class="nav-section">
-
-<a href="/dashboard" class="nav-item">
-<i data-lucide="layout-dashboard"></i>
-<span>Dashboard</span>
-</a>
-
-<a href="/workspace" class="nav-item">
-<i data-lucide="folder"></i>
-<span>Workspace</span>
-</a>
-
-<a href="/history" class="nav-item">
-<i data-lucide="clock"></i>
-<span>History</span>
-</a>
-
-<a href="/plans" class="nav-item">
-<i data-lucide="credit-card"></i>
-<span>Plans</span>
-</a>
-
-<a href="/settings" class="nav-item">
-<i data-lucide="settings"></i>
-<span>Settings</span>
-</a>
-
-
-{% if user and user.role == "admin" %}
-
-<a href="/admin" class="nav-item">
-<i data-lucide="shield"></i>
-<span>Admin</span>
-</a>
-
-{% endif %}
-
-</div>
-
-
-<!-- Sponsor Section -->
-
-<div class="sponsor-box">
-
-<div class="sponsor-title">
-Sponsored by
-</div>
-
-<div class="sponsor-name">
-Uday Mondal | Tax Consultant Advocate
-</div>
-
-<img src="/static/logo1.png" class="sponsor-logo">
-
-</div>
-
-</div>
-
-
-<!-- ================= MAIN ================= -->
-
-<div class="main">
-
-{% block content %}{% endblock %}
-
-<footer style="margin-top:80px;opacity:.7">
-
-Created by Debasish Biswas
-
-</footer>
-
-</div>
-
-
-<!-- ================= JS ================= -->
-
-<script>
-
-function toggleSidebar(){
-
-document.getElementById("sidebar").classList.toggle("mini")
-
-}
-
-function toggleProfileMenu(){
-
-document.getElementById("profileMenu").classList.toggle("show")
-
-}
-
-function toggleNotification(){
-
-document.getElementById("notificationMenu").classList.toggle("show")
-
-}
-
-window.onclick = function(e){
-
-if(!e.target.closest('.avatar-container')){
-document.getElementById("profileMenu")?.classList.remove("show")
-}
-
-if(!e.target.closest('.notification-container')){
-document.getElementById("notificationMenu")?.classList.remove("show")
-}
-
-}
-
-lucide.createIcons()
-
-</script>
-
-
-</body>
-</html>
