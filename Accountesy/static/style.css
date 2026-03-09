@@ -1,86 +1,97 @@
-﻿:root {
-    --glass-bg: rgba(255, 255, 255, 0.1);
-    --glass-border: rgba(255, 255, 255, 0.2);
-    --primary-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+:root {
+    --sidebar-width: 260px;
+    --accent: #3b82f6;
+    --glass-bg: rgba(255, 255, 255, 0.05);
 }
 
 body {
-    background: var(--primary-gradient);
+    margin: 0;
+    padding: 0;
     font-family: 'Poppins', sans-serif;
     color: white;
-    min-height: 100vh;
+    /* Centered Background Fix */
+    background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), 
+                url('/static/b-logo.png') no-repeat center center fixed;
+    background-size: 50% auto; /* Adjusted size for professional look */
+    background-color: #0f172a;
 }
 
-.glass-card {
-    background: var(--glass-bg);
+/* TOPBAR Fix: 50px lined alignment */
+.topbar {
+    height: 70px;
+    background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border: 1px solid var(--glass-border);
-    border-radius: 20px;
-    padding: 2rem;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 50px; /* 50px lined */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
-.landing-hero {
+.top-right {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+}
+
+/* Round Avatar Styling */
+.avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--accent);
+    border-radius: 50%; /* Makes it round */
+    display: flex;
     align-items: center;
     justify-content: center;
-    padding: 100px 20px;
-}
-
-.convert-btn {
-    background: #3b82f6;
-    color: white;
-    padding: 12px 30px;
-    border-radius: 12px;
     font-weight: 600;
-    transition: 0.3s;
-    border: none;
     cursor: pointer;
+    border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
-.convert-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4);
-}
-.topbar, .sidebar, .glass-card, .stat-card {
-    background: rgba(255, 255, 255, 0.08) !important;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+/* Notification Bell Styling */
+.notification-container i {
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.8);
+    transition: 0.3s;
 }
 
-.nav-btn {
-    color: white;
-    text-decoration: none;
-    margin-right: 20px;
-    font-weight: 500;
+.notif-dot {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    background: #ef4444;
+    border-radius: 50%;
 }
 
-.main { margin-left: 260px; padding: 40px; }
-.topbar { display: flex; justify-content: space-between; padding: 15px 30px; align-items: center; position: sticky; top: 0; z-index: 100; }
-/* Glassmorphism Core */
-.topbar, .sidebar, .sponsor-box, .glass-card {
-    background: rgba(255, 255, 255, 0.05) !important;
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+/* SIDEBAR Fix */
+.sidebar {
+    width: var(--sidebar-width);
+    height: 100vh;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    position: fixed;
+    left: 0;
+    top: 70px;
+    padding: 30px 20px;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.main-logo { height: 45px; width: auto; }
-.sponsor-logo { width: 100%; border-radius: 10px; margin: 10px 0; }
+.main {
+    margin-left: var(--sidebar-width);
+    padding: 50px; /* 50px lined alignment */
+    min-height: calc(100vh - 170px);
+}
 
 .footer {
-    margin-top: 50px;
-    padding: 20px;
+    margin-left: var(--sidebar-width);
+    padding: 30px 50px;
     text-align: center;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(5px);
-    border-radius: 15px 15px 0 0;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
 }
-
-.footer strong { color: #3b82f6; }
