@@ -8,6 +8,8 @@ from app.routers import workspace_routes
 from app.routers import history_routes
 from app.routers import admin_routes
 from app.routers import plans_routes
+from app.routers import pages_routes
+from app.routers import convert_routes
 
 app = FastAPI(title="Accountesy – Accounting Expert")
 
@@ -20,3 +22,5 @@ app.include_router(workspace_routes.router)
 app.include_router(history_routes.router)
 app.include_router(admin_routes.router)
 app.include_router(plans_routes.router)
+app.include_router(pages_routes.router)
+app.include_router(convert_routes.router)
