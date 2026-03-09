@@ -1,10 +1,15 @@
-from fastapi import APIRouter
-router=APIRouter()
+from fastapi import APIRouter, Form
+import bcrypt
 
-@router.get("/login")
-def login():
-    return {"login":"page"}
+router = APIRouter()
 
-@router.get("/register")
-def register():
-    return {"register":"page"}
+@router.post("/login")
+def login(email: str = Form(...), password: str = Form(...)):
+    return {"status": "login success"}
+
+@router.post("/register")
+def register(email: str = Form(...), password: str = Form(...)):
+    
+    hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+
+    return {"status": "registered"}
