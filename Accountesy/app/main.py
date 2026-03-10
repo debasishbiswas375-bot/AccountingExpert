@@ -9,27 +9,30 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import StreamingResponse
 from bs4 import BeautifulSoup
 
-# --- ROOT PATH SETUP ---
+# --- 1. ROOT PATH FIX ---
+# Forces the app to see folders correctly on Render
 app_dir = os.path.dirname(os.path.abspath(__file__)) 
 root_dir = os.path.dirname(app_dir) 
 sys.path.append(app_dir)
 
 app = FastAPI(title="Accountesy")
 
-# --- STATIC & TEMPLATES ---
+# --- 2. STATIC & TEMPLATES ---
+# Ensures your CSS and Logo load correctly
 app.mount("/static", StaticFiles(directory=os.path.join(root_dir, "static")), name="static")
 templates = Jinja2Templates(directory=os.path.join(root_dir, "templates"))
 
-# --- UNIVERSAL MAPPING ENGINE ---
+# --- 3. UNIVERSAL BANK ENGINE ---
 def universal_bank_parser(content, filename):
-    """Detects headers for any Indian Bank Statement autonomously."""
+    """Detects headers for all Indian Bank Statements autonomously"""
     if filename.endswith('.pdf'):
         with pdfplumber.open(io.BytesIO(content)) as pdf:
             all_rows = []
             for page in pdf.pages:
                 table = page.extract_table()
                 if table: all_rows.extend(table)
-            # Find the header row by looking for 'Date'
+            
+            # Auto-detect header row containing 'Date'
             header_idx = 0
             for i, row in enumerate(all_rows):
                 if any('date' in str(cell).lower() for cell in row if cell):
@@ -37,12 +40,12 @@ def universal_bank_parser(content, filename):
                     break
             df = pd.DataFrame(all_rows[header_idx+1:], columns=all_rows[header_idx])
     else:
+        # Engine fix for Excel format errors
         df = pd.read_excel(io.BytesIO(content), engine='openpyxl')
 
-    # Clean headers: remove spaces and normalize for XML tags
+    # Clean headers for XML (No spaces allowed)
     df.columns = [str(c).strip().replace(' ', '_').replace('.', '') for c in df.columns]
     
-    # Universal Header Mapping Logic
     mapping = {}
     for col in df.columns:
         c_low = col.lower()
@@ -53,7 +56,7 @@ def universal_bank_parser(content, filename):
     
     return df.rename(columns=mapping)
 
-# --- ROUTES ---
+# --- 4. ROUTES ---
 @app.get("/")
 async def landing(request: Request):
     return templates.TemplateResponse("landing.html", {"request": request})
@@ -62,10 +65,6 @@ async def landing(request: Request):
 async def workspace(request: Request):
     return templates.TemplateResponse("workspace.html", {"request": request})
 
-@app.get("/history")
-async def history(request: Request):
-    return templates.TemplateResponse("history.html", {"request": request})
-
 @app.get("/account")
 async def account(request: Request):
     return templates.TemplateResponse("account.html", {"request": request})
@@ -73,19 +72,18 @@ async def account(request: Request):
 @app.post("/convert/process")
 async def process_conversion(bank_file: UploadFile = File(...), master_file: UploadFile = File(...)):
     try:
-        # 1. Parse Tally Masters from Master.html (italic tags)
+        # Parse Tally Ledgers
         master_content = await master_file.read()
         soup = BeautifulSoup(master_content, "html.parser")
         tally_ledgers = [td.get_text().strip() for td in soup.find_all('td') if 'italic' in str(td.get('style'))]
 
-        # 2. Universal Parse Bank Statement
+        # Process Bank Statement
         bank_content = await bank_file.read()
         df = universal_bank_parser(bank_content, bank_file.filename.lower())
 
-        # 3. AI Autonomous Ledger Mapping
+        # AI Ledger Matching
         def match_ledger(narration):
             narration = str(narration).upper()
-            # Priority matches for common narrations in your master
             if "PAYTM" in narration: return "PAYTM"
             if "HPCL" in narration: return "Hindustan Petroleum Corporation LTD"
             for ledger in tally_ledgers:
@@ -95,7 +93,7 @@ async def process_conversion(bank_file: UploadFile = File(...), master_file: Upl
         if 'Narration' in df.columns:
             df['Suggested_Ledger'] = df['Narration'].apply(match_ledger)
 
-        # 4. Generate Tally XML
+        # Generate XML
         output = io.BytesIO()
         df.to_xml(output, index=False, root_name='ENVELOPE', row_name='VOUCHER')
         output.seek(0)
@@ -103,7 +101,13 @@ async def process_conversion(bank_file: UploadFile = File(...), master_file: Upl
         return StreamingResponse(
             output, 
             media_type="application/xml",
-            headers={"Content-Disposition": "attachment; filename=Accountesy_Universal_Tally.xml"}
+            headers={"Content-Disposition": "attachment; filename=Accountesy_Universal_Export.xml"}
         )
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Conversion Error: {str(e)}")
+
+# --- 5. RENDER PORT BINDING FIX ---
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.environ.get("PORT", 10000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
