@@ -1,60 +1,53 @@
-import io
-import pandas as pd
-import pdfplumber
+import io, re, pandas as pd, pdfplumber
 from bs4 import BeautifulSoup
-import re
 
-async def process_tally_conversion(bank_file, master_file):
-    # 1. Read Master.html Ledgers
+async def get_preview_data(bank_file, master_file):
+    # 1. Parse Masters (find short names and account hints)
     master_content = await master_file.read()
     soup = BeautifulSoup(master_content, "html.parser")
-    ledgers = [td.get_text().strip() for td in soup.find_all('td') if 'italic' in str(td.get('style'))]
+    tally_ledgers = [td.get_text().strip() for td in soup.find_all('td') if 'italic' in str(td.get('style'))]
 
-    # 2. Extract Bank Data (PDF or Excel)
+    # 2. Extract Data from PDF
     bank_content = await bank_file.read()
-    if bank_file.filename.lower().endswith('.pdf'):
-        with pdfplumber.open(io.BytesIO(bank_content)) as pdf:
-            rows = []
-            for page in pdf.pages:
-                table = page.extract_table()
-                if table: rows.extend(table)
-            # FIX: Skip header rows by finding the first row starting with a Date
-            clean_rows = [r for r in rows if r[0] and re.match(r'\d{2}/\d{2}/\d{4}', str(r[0]))]
-            df = pd.DataFrame(clean_rows, columns=['Date', 'ValueDate', 'Narration', 'Ref', 'Branch', 'Debit', 'Credit', 'Balance'])
-    else:
-        df = pd.read_excel(io.BytesIO(bank_content), engine='openpyxl')
-
-    # 3. Build Strict Tally XML (Double Entry Logic)
-    xml = '<ENVELOPE><HEADER><TALLYREQUEST>Import Data</TALLYREQUEST></HEADER><BODY><IMPORTDATA><REQUESTDESC><REPORTNAME>Vouchers</REPORTNAME></REQUESTDESC><REQUESTDATA>'
+    all_rows = []
+    with pdfplumber.open(io.BytesIO(bank_content)) as pdf:
+        for page in pdf.pages:
+            table = page.extract_table()
+            if table: all_rows.extend(table)
     
+    # 3. FIX: Universal Date/Header Search
+    # We find the row that contains 'Date' and use it as the header
+    header_idx = next((i for i, r in enumerate(all_rows) if any('date' in str(c).lower() for c in r if c)), 0)
+    df = pd.DataFrame(all_rows[header_idx+1:], columns=all_rows[header_idx])
+    
+    # Identify the Date Column dynamically
+    date_col = next((c for c in df.columns if 'date' in str(c).lower()), df.columns[0])
+
+    preview_results = []
     for _, row in df.iterrows():
-        # Sanitize numbers to prevent string-to-float errors
-        def to_num(val): return re.sub(r'[^\d.]', '', str(val)) or "0"
+        # Skip empty or header-duplicate rows
+        raw_date = str(row[date_col]).strip()
+        if not re.search(r'\d', raw_date) or 'date' in raw_date.lower(): continue
+
+        narr = str(row.get('Narration', row.get('Description', ''))).replace('\n', ' ').upper()
+        debit = re.sub(r'[^\d.]', '', str(row.get('Debit', row.get('Withdrawal', '0')))) or "0"
+        credit = re.sub(r'[^\d.]', '', str(row.get('Credit', row.get('Deposit', '0')))) or "0"
+
+        # 4. AI Mapping with Doubt Detection
+        suggestions = []
+        for ledger in tally_ledgers:
+            # Match full name or first 4 chars (Short Name Logic)
+            if ledger.upper() in narr or ledger.upper()[:4] in narr:
+                suggestions.append(ledger)
         
-        dr, cr = to_num(row.get('Debit', 0)), to_num(row.get('Credit', 0))
-        amt = dr if float(dr) > 0 else cr
-        v_type = "Payment" if float(dr) > 0 else "Receipt"
-        date = str(row['Date']).replace('/', '').split(' ')[0]
-
-        # Smart Match
-        target = next((l for l in ledgers if l.upper() in str(row['Narration']).upper()), "Suspenses")
-
-        xml += f"""
-        <TALLYMESSAGE xmlns:UDF="TallyUDF">
-            <VOUCHER VCHTYPE="{v_type}" ACTION="Create">
-                <DATE>{date}</DATE>
-                <NARRATION>{row['Narration']}</NARRATION>
-                <ALLLEDGERENTRIES.LIST>
-                    <LEDGERNAME>{target}</LEDGERNAME>
-                    <ISDEEMEDPOSITIVE>{"Yes" if v_type == "Payment" else "No"}</ISDEEMEDPOSITIVE>
-                    <AMOUNT>{("-" if v_type == "Payment" else "") + amt}</AMOUNT>
-                </ALLLEDGERENTRIES.LIST>
-                <ALLLEDGERENTRIES.LIST>
-                    <LEDGERNAME>State Bank of India-37017480905</LEDGERNAME>
-                    <ISDEEMEDPOSITIVE>{"No" if v_type == "Payment" else "Yes"}</ISDEEMEDPOSITIVE>
-                    <AMOUNT>{"-" if v_type == "Receipt" else ""}{amt}</AMOUNT>
-                </ALLLEDGERENTRIES.LIST>
-            </VOUCHER>
-        </TALLYMESSAGE>"""
-
-    return (xml + '</REQUESTDATA></IMPORTDATA></BODY></ENVELOPE>').encode('utf-8')
+        preview_results.append({
+            "date": raw_date, # VOUCHER DATE FIXED
+            "narration": narr,
+            "amount": debit if float(debit) > 0 else credit,
+            "type": "Payment" if float(debit) > 0 else "Receipt",
+            "ledger": suggestions[0] if len(suggestions) == 1 else "Suspense A/c",
+            "options": list(set(suggestions + ["Suspense A/c"]))[:4],
+            "doubt": len(suggestions) != 1
+        })
+    
+    return preview_results, tally_ledgers
