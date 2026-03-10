@@ -1,58 +1,54 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Accountesy</title>
+    <meta charset="UTF-8">
+    <title>Accountesy - Accounting Expert</title>
     <link rel="stylesheet" href="/static/style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
-    <div class="topbar">
-        <div class="brand-section">
-            <i data-lucide="menu" id="sidebar-toggle"></i>
-            <img src="/static/logo.png" style="height:60px;">
-            <div class="brand-text">
-                <div class="name">Accountesy</div>
-                <div class="tagline">Learn Smart, Grow Fast, Be Accounting Expert with Accountesy</div>
+<body style="background: #0f172a; color: white; margin: 0; font-family: sans-serif;">
+
+    <div style="height: 70px; background: rgba(255,255,255,0.05); backdrop-filter: blur(15px); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <img src="/static/logo.png" style="height: 50px;">
+            <div>
+                <b style="font-size: 18px;">Accountesy</b><br>
+                <span style="font-size: 11px; opacity: 0.7;">Learn Smart, Grow Fast, Be Accounting Expert</span>
             </div>
         </div>
-        <div class="topbar-actions">
-            <i data-lucide="bell" id="bell-icon"></i>
-            <div class="avatar" id="avatar-icon">D</div>
-            <div class="dropdown" id="avatar-dropdown">
-                <a href="/account">Account Settings</a>
-                <a href="/logout">Logout</a>
-            </div>
+        <div style="display: flex; gap: 20px; align-items: center;">
+            <i data-lucide="bell" style="cursor:pointer;"></i>
+            <div style="width: 35px; height: 35px; background: #3b82f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="location.href='/account'">D</div>
         </div>
     </div>
 
-    <div class="main-layout">
-        <div class="sidebar" id="sidebar">
-            <a href="/" class="nav-item"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
-            <a href="/workspace" class="nav-item"><i data-lucide="briefcase"></i><span>Workspace</span></a>
-            <a href="/features" class="nav-item"><i data-lucide="star"></i><span>Features</span></a>
-            <a href="/pricing" class="nav-item"><i data-lucide="credit-card"></i><span>Pricing</span></a>
-            <a href="/history" class="nav-item"><i data-lucide="history"></i><span>History</span></a>
+    <div style="display: flex; min-height: calc(100vh - 130px);">
+        <div style="width: 240px; background: rgba(255,255,255,0.02); border-right: 1px solid rgba(255,255,255,0.1); padding: 20px;">
+            <a href="/workspace" style="display: flex; align-items: center; gap: 15px; color: white; text-decoration: none; padding: 12px; border-radius: 8px; margin-bottom: 5px;">
+                <i data-lucide="briefcase"></i> <span>Workspace</span>
+            </a>
+            <a href="/history" style="display: flex; align-items: center; gap: 15px; color: white; text-decoration: none; padding: 12px; border-radius: 8px; margin-bottom: 5px;">
+                <i data-lucide="history"></i> <span>History</span>
+            </a>
+            <a href="/pricing" style="display: flex; align-items: center; gap: 15px; color: white; text-decoration: none; padding: 12px; border-radius: 8px; margin-bottom: 5px;">
+                <i data-lucide="credit-card"></i> <span>Pricing</span>
+            </a>
+            <a href="/account" style="display: flex; align-items: center; gap: 15px; color: white; text-decoration: none; padding: 12px; border-radius: 8px; margin-bottom: 5px;">
+                <i data-lucide="user"></i> <span>Account</span>
+            </a>
         </div>
-        <div class="content-area">
+
+        <div style="flex: 1; padding: 40px; padding-bottom: 100px;">
             {% block content %}{% endblock %}
         </div>
     </div>
 
-    <footer class="main-footer">
-        <div>© 2026 Accountesy | Created by <strong>Debasish Biswas</strong></div>
+    <footer style="height: 60px; background: #0f172a; display: flex; align-items: center; justify-content: center; border-top: 1px solid rgba(255,255,255,0.1); position: fixed; bottom: 0; width: 100%; z-index: 100;">
+        <div style="font-size: 14px; color: rgba(255,255,255,0.6);">
+            © 2026 Accountesy | Created by <strong style="color: white;">Debasish Biswas</strong>
+        </div>
     </footer>
 
-    <script>
-        // Dropdown & Sidebar Logic
-        document.getElementById('avatar-icon').onclick = (e) => {
-            e.stopPropagation();
-            document.getElementById('avatar-dropdown').classList.toggle('show');
-        };
-        document.getElementById('sidebar-toggle').onclick = () => {
-            document.getElementById('sidebar').classList.toggle('mini');
-        };
-        window.onclick = () => document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
-        lucide.createIcons();
-    </script>
+    <script>lucide.createIcons();</script>
 </body>
 </html>
