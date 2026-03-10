@@ -10,37 +10,28 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import StreamingResponse
 from bs4 import BeautifulSoup
 
-# --- PATH CONFIGURATION ---
-# Calculate paths based on project structure
+# --- PATH & APP CONFIG ---
 app_dir = os.path.dirname(os.path.abspath(__file__)) 
 root_dir = os.path.dirname(app_dir) 
 sys.path.append(app_dir)
 
 app = FastAPI(title="Accountesy")
-
-# --- STATIC & TEMPLATES ---
-# Ensures CSS and HTML files load correctly from Accountesy root
 app.mount("/static", StaticFiles(directory=os.path.join(root_dir, "static")), name="static")
 templates = Jinja2Templates(directory=os.path.join(root_dir, "templates"))
 
 # --- UNIVERSAL ENGINE ---
 def universal_parser(content, filename):
-    """Detects headers for all Indian Bank Statements and cleans XML-invalid characters"""
     if filename.endswith('.pdf'):
         with pdfplumber.open(io.BytesIO(content)) as pdf:
             rows = []
             for page in pdf.pages:
                 table = page.extract_table()
                 if table: rows.extend(table)
-            # Find header row containing 'date'
             h_idx = next((i for i, r in enumerate(rows) if any('date' in str(c).lower() for c in r if c)), 0)
             df = pd.DataFrame(rows[h_idx+1:], columns=rows[h_idx])
     else:
-        # engine fix for excel format
         df = pd.read_excel(io.BytesIO(content), engine='openpyxl')
 
-    # --- CRITICAL FIX: XML TAG CLEANER ---
-    # Replaces spaces and special characters with underscores
     def clean_tag(name):
         name = str(name).replace('\n', ' ').strip()
         name = re.sub(r'[^a-zA-Z0-9_]', '_', name) 
@@ -49,64 +40,75 @@ def universal_parser(content, filename):
     df.columns = [clean_tag(c) for c in df.columns]
     return df
 
-# --- PAGE ROUTES ---
+# --- ROUTES ---
 @app.get("/")
-async def landing(request: Request):
-    return templates.TemplateResponse("landing.html", {"request": request})
+async def landing(request: Request): return templates.TemplateResponse("landing.html", {"request": request})
 
 @app.get("/workspace")
-async def workspace(request: Request):
-    return templates.TemplateResponse("workspace.html", {"request": request})
+async def workspace(request: Request): return templates.TemplateResponse("workspace.html", {"request": request})
 
 @app.get("/history")
-async def history(request: Request):
-    return templates.TemplateResponse("history.html", {"request": request})
+async def history(request: Request): return templates.TemplateResponse("history.html", {"request": request})
 
 @app.get("/account")
-async def account(request: Request):
-    return templates.TemplateResponse("account.html", {"request": request})
+async def account(request: Request): return templates.TemplateResponse("account.html", {"request": request})
 
-# --- PROCESSING ENGINE ---
+# --- RECTIFIED CONVERSION ENGINE (Matches working tally.xml) ---
 @app.post("/convert/process")
 async def process_conversion(bank_file: UploadFile = File(...), master_file: UploadFile = File(...)):
     try:
-        # Parse Tally Ledgers from Master.html
         master_content = await master_file.read()
         soup = BeautifulSoup(master_content, "html.parser")
         ledgers = [td.get_text().strip() for td in soup.find_all('td') if 'italic' in str(td.get('style'))]
 
-        # Process Bank Statement
         bank_content = await bank_file.read()
         df = universal_parser(bank_content, bank_file.filename.lower())
 
-        # AI Matching logic
-        def match_ledger(narration):
-            narration = str(narration).upper()
-            if "PAYTM" in narration: return "PAYTM"
-            if "HPCL" in narration: return "Hindustan Petroleum Corporation LTD"
+        # Start building the strict Tally XML structure
+        xml_output = '<ENVELOPE><HEADER><TALLYREQUEST>Import Data</TALLYREQUEST></HEADER><BODY><IMPORTDATA><REQUESTDESC><REPORTNAME>Vouchers</REPORTNAME></REQUESTDESC><REQUESTDATA>'
+        
+        for _, row in df.iterrows():
+            # Standardize fields for Tally
+            date_raw = str(row.get('Date', '')).replace('/', '').split(' ')[0]
+            narration = str(row.get('Narration', 'Bank Transaction')).replace('&', '&amp;')
+            debit = str(row.get('Debit', '')).replace(',', '') or "0"
+            credit = str(row.get('Credit', '')).replace(',', '') or "0"
+            amount = debit if float(debit or 0) > 0 else credit
+            vch_type = "Payment" if float(debit or 0) > 0 else "Receipt"
+            
+            # Smart Mapping Logic
+            suggested_ledger = "Suspenses"
             for ledger in ledgers:
-                if ledger.upper() in narration: return ledger
-            return "Suspense A/c"
+                if ledger.upper() in narration.upper():
+                    suggested_ledger = ledger
+                    break
 
-        # Auto-detect Narration column
-        narr_col = next((c for c in df.columns if any(k in c.lower() for k in ['desc', 'narr', 'partic', 'description'])), None)
-        if narr_col:
-            df['Suggested_Ledger'] = df[narr_col].apply(match_ledger)
+            # Create Double-Entry Voucher Block
+            xml_output += f"""
+            <TALLYMESSAGE xmlns:UDF="TallyUDF">
+                <VOUCHER VCHTYPE="{vch_type}" ACTION="Create">
+                    <DATE>{date_raw}</DATE>
+                    <VOUCHERTYPENAME>{vch_type}</VOUCHERTYPENAME>
+                    <NARRATION>{narration}</NARRATION>
+                    <ALLLEDGERENTRIES.LIST>
+                        <LEDGERNAME>{suggested_ledger}</LEDGERNAME>
+                        <ISDEEMEDPOSITIVE>{"Yes" if vch_type == "Payment" else "No"}</ISDEEMEDPOSITIVE>
+                        <AMOUNT>{("-" if vch_type == "Payment" else "") + amount}</AMOUNT>
+                    </ALLLEDGERENTRIES.LIST>
+                    <ALLLEDGERENTRIES.LIST>
+                        <LEDGERNAME>State Bank of India-37017480905</LEDGERNAME>
+                        <ISDEEMEDPOSITIVE>{"No" if vch_type == "Payment" else "Yes"}</ISDEEMEDPOSITIVE>
+                        <AMOUNT>{"-" if vch_type == "Receipt" else ""}{amount}</AMOUNT>
+                    </ALLLEDGERENTRIES.LIST>
+                </VOUCHER>
+            </TALLYMESSAGE>"""
 
-        # Generate XML
-        output = io.BytesIO()
-        df.to_xml(output, index=False, root_name='ENVELOPE', row_name='VOUCHER')
-        output.seek(0)
+        xml_output += '</REQUESTDATA></IMPORTDATA></BODY></ENVELOPE>'
 
         return StreamingResponse(
-            output, 
+            io.BytesIO(xml_output.encode('utf-8')), 
             media_type="application/xml",
-            headers={"Content-Disposition": "attachment; filename=Accountesy_Tally_Import.xml"}
+            headers={"Content-Disposition": "attachment; filename=Accountesy_Final_Tally.xml"}
         )
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error: {str(e)}")
-
-# Render Port Fix
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
