@@ -1,38 +1,32 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="workspace-header" style="text-align: center; margin-bottom: 50px;">
-    <h1 style="font-size: 40px; font-weight: 700;">Simple & Transparent Pricing</h1>
-    <p style="font-size: 18px; opacity: 0.8;">Choose the right plan for your accounting needs.</p>
-</div>
+<div style="max-width: 1000px; margin: 0 auto; text-align: center; color: white;">
+    <h1 style="font-size: 3rem; margin-bottom: 10px;">Simple Pricing</h1>
+    <p style="margin-bottom: 60px; opacity: 0.8;">Choose the plan that fits your accounting volume.</p>
 
-<div class="feature-row" style="justify-content: center; gap: 30px; align-items: flex-start;">
-    
-    <div class="feature-box" style="flex: 1; max-width: 300px; padding: 40px 30px; border: 1px solid rgba(255,255,255,0.1);">
-        <h2 style="margin: 0;">Starter</h2>
-        <div style="font-size: 32px; font-weight: 700; margin: 20px 0;">Free</div>
-        <ul style="list-style: none; padding: 0; font-size: 14px; opacity: 0.9; line-height: 2;">
-            <li><i data-lucide="check" style="width: 16px; color: #4ade80;"></i> 5 Conversions / month</li>
-            <li><i data-lucide="check" style="width: 16px; color: #4ade80;"></i> Standard AI Mapping</li>
-            <li><i data-lucide="check" style="width: 16px; color: #4ade80;"></i> Tally XML Export</li>
-            <li style="opacity: 0.5;"><i data-lucide="x" style="width: 16px; color: #f87171;"></i> Priority AI Learning</li>
-        </ul>
-        <button style="width: 100%; margin-top: 30px; padding: 12px; border-radius: 10px; border: 1px solid white; background: transparent; color: white; cursor: pointer; font-weight: 600;">Current Plan</button>
+    <div class="grid-container">
+        <div class="pricing-card">
+            <h3>Starter</h3>
+            <div class="price">₹0<span style="font-size: 1rem; color: #888;">/mo</span></div>
+            <ul style="list-style: none; padding: 0; margin-bottom: 30px; text-align: left; line-height: 2;">
+                <li><i data-lucide="check" style="width: 16px; color: green;"></i> 5 Statements / month</li>
+                <li><i data-lucide="check" style="width: 16px; color: green;"></i> Manual Suspense Niling</li>
+                <li><i data-lucide="check" style="width: 16px; color: green;"></i> TallyPrime Support</li>
+            </ul>
+            <a href="/register" class="btn-white" style="width: 100%; box-sizing: border-box;">Get Started</a>
+        </div>
+
+        <div class="pricing-card popular">
+            <div style="background: #2a67b1; color: white; padding: 5px; border-radius: 50px; font-size: 0.8rem; width: 100px; margin: -55px auto 20px;">MOST POPULAR</div>
+            <h3>Professional</h3>
+            <div class="price">₹999<span style="font-size: 1rem; color: #888;">/mo</span></div>
+            <ul style="list-style: none; padding: 0; margin-bottom: 30px; text-align: left; line-height: 2;">
+                <li><i data-lucide="check" style="width: 16px; color: green;"></i> Unlimited Statements</li>
+                <li><i data-lucide="check" style="width: 16px; color: green;"></i> AI Automatic Ledger Matching</li>
+                <li><i data-lucide="check" style="width: 16px; color: green;"></i> Priority Support</li>
+            </ul>
+            <a href="/register" class="btn-white" style="width: 100%; box-sizing: border-box; background: #2a67b1; color: white;">Upgrade Now</a>
+        </div>
     </div>
-
-    <div class="feature-box" style="flex: 1; max-width: 300px; padding: 40px 30px; background: rgba(59, 130, 246, 0.2); border: 2px solid #3b82f6;">
-        <div style="background: #3b82f6; color: white; font-size: 10px; padding: 4px 10px; border-radius: 20px; width: fit-content; margin-bottom: 10px; font-weight: 700;">MOST POPULAR</div>
-        <h2 style="margin: 0;">Professional</h2>
-        <div style="font-size: 32px; font-weight: 700; margin: 20px 0;">₹999 <span style="font-size: 14px; font-weight: 400; opacity: 0.7;">/mo</span></div>
-        <ul style="list-style: none; padding: 0; font-size: 14px; opacity: 0.9; line-height: 2;">
-            <li><i data-lucide="check" style="width: 16px; color: #4ade80;"></i> Unlimited Conversions</li>
-            <li><i data-lucide="check" style="width: 16px; color: #4ade80;"></i> Priority AI Learning</li>
-            <li><i data-lucide="check" style="width: 16px; color: #4ade80;"></i> Multi-User Access</li>
-            <li><i data-lucide="check" style="width: 16px; color: #4ade80;"></i> 24/7 Premium Support</li>
-        </ul>
-        <button style="width: 100%; margin-top: 30px; padding: 12px; border-radius: 10px; border: none; background: #3b82f6; color: white; cursor: pointer; font-weight: 700; box-shadow: 0 10px 20px rgba(59,130,246,0.3);">Upgrade Now</button>
-    </div>
-
 </div>
-
-<script>lucide.createIcons();</script>
 {% endblock %}
