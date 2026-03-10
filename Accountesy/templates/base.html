@@ -9,53 +9,38 @@
 </head>
 <body>
 
-    <div class="topbar">
-        <div class="top-left">
-            <button class="hamburger" id="sidebar-toggle"><span></span><span></span><span></span></button>
-            <img src="/static/logo.png" class="brand-logo" alt="Logo">
-            <div class="brand-info">
-                <div class="brand-name">Accountesy</div>
-                <div class="brand-tagline">Learn Smart, Grow Fast, Be Accounting Expert</div>
-            </div>
+    <div class="sidebar">
+        <div class="logo-container" style="text-align: center; margin-bottom: 40px;">
+            <img src="/static/logo.png" alt="Accountesy" style="width: 150px;">
         </div>
-        <div class="top-right">
-            <i data-lucide="bell" style="cursor:pointer;"></i>
-            <div class="avatar" id="avatar-btn" style="cursor:pointer;" onclick="location.href='/account'">D</div>
-        </div>
+        
+        <nav style="display: flex; flex-direction: column; gap: 10px;">
+            <a href="/" class="nav-link">
+                <i data-lucide="home"></i> Home / Features
+            </a>
+            <a href="/workspace" class="nav-link active">
+                <i data-lucide="layout-dashboard"></i> Workspace
+            </a>
+            <a href="/pricing" class="nav-link">
+                <i data-lucide="credit-card"></i> Pricing
+            </a>
+            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 15px 0;">
+            <a href="/history" class="nav-link">
+                <i data-lucide="history"></i> History
+            </a>
+            <a href="/account" class="nav-link">
+                <i data-lucide="settings"></i> Account
+            </a>
+        </nav>
     </div>
 
-    <div style="display: flex;">
-        <div class="sidebar" id="sidebar">
-            <div class="nav-section">
-                <a href="/workspace" class="nav-item"><i data-lucide="briefcase"></i><span>Workspace</span></a>
-                <a href="/history" class="nav-item"><i data-lucide="history"></i><span>History</span></a>
-                <a href="/account" class="nav-item"><i data-lucide="user"></i><span>Account</span></a>
-            </div>
-            <div class="sponsor-box">
-                <div class="sponsor-title">Proudly Sponsored by</div>
-                <div class="sponsor-name">Uday Mondal | Tax Consultant</div>
-            </div>
-        </div>
-
-        <div class="main-wrapper" style="margin-left: 340px; flex: 1; padding: 40px; padding-top: 130px; min-height: 80vh;">
-            {% block content %}{% endblock %}
-        </div>
+    <div class="main-wrapper">
+        {% block content %}{% endblock %}
     </div>
-
-    <footer class="main-footer">
-        <div style="font-size: 14px; opacity: 0.8;">
-            © 2026 Accountesy | Created by <strong style="color: white;">Debasish Biswas</strong>
-        </div>
-    </footer>
 
     <script>
         // Initialize Icons
         lucide.createIcons();
-        // Toggle Sidebar
-        document.getElementById('sidebar-toggle').onclick = () => {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('mini');
-        };
     </script>
 </body>
 </html>
