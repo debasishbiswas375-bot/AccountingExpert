@@ -1,18 +1,28 @@
 import pandas as pd
+from rapidfuzz import process, utils
 
-def intelligent_header_mapping(df):
-    mapping = {
-        'Date': ['date', 'txn date', 'transaction date', 'vch date', 'value date'],
-        'Narration': ['particulars', 'narration', 'description', 'remarks', 'chq/ref no'],
-        'Debit': ['withdrawal', 'dr', 'debit', 'amount (dr)', 'payment'],
-        'Credit': ['deposit', 'cr', 'credit', 'amount (cr)', 'receipt']
-    }
-    
-    new_columns = {}
-    for col in df.columns:
-        clean_col = str(col).strip().lower()
-        for standard, variations in mapping.items():
-            if any(v in clean_col for v in variations):
-                new_columns[col] = standard
-    
-    return df.rename(columns=new_columns)
+def ai_ledger_mapper(statement_df, tally_masters):
+    """
+    Learns from your tally_masters list to auto-assign ledgers
+    to bank transactions based on narration patterns.
+    """
+    mapped_data = []
+    # List of known ledgers from your master.html
+    master_ledgers = tally_masters 
+
+    for index, row in statement_df.iterrows():
+        description = str(row['Narration']).upper()
+        
+        # AI Fuzzy Matching: Finds the best ledger match from your master list
+        match = process.extractOne(description, master_ledgers, processor=utils.default_process)
+        
+        suggested_ledger = match[0] if match and match[1] > 80 else "Suspense A/c"
+        
+        mapped_data.append({
+            "Date": row['Date'],
+            "Narration": row['Narration'],
+            "Amount": row['Debit'] if row['Debit'] > 0 else row['Credit'],
+            "Ledger": suggested_ledger
+        })
+        
+    return pd.DataFrame(mapped_data)
