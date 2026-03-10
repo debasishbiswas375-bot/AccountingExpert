@@ -3,57 +3,71 @@
 <head>
     <title>Accountesy</title>
     <link rel="icon" type="image/png" href="/static/logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-    <div class="topbar">
-        <div class="top-left">
-            <div style="cursor:pointer; margin-right:15px;" onclick="toggleSidebar()">
-                <i data-lucide="menu"></i>
-            </div>
-            <img src="/static/logo.png" style="height:70px;">
-            <div class="brand-text">
-                <div style="font-size:28px; font-weight:700;">Accountesy</div>
-                <div style="font-size:12px; opacity:0.9;">Learn Smart, Grow Fast, Be Accounting Expert with Accountesy</div>
-            </div>
+
+<div class="topbar">
+    <div class="brand-section">
+        <i data-lucide="menu" onclick="toggleSidebar()" style="cursor:pointer; margin-right:10px;"></i>
+        <img src="/static/logo.png" style="height:65px;">
+        <div>
+            <div class="brand-name">Accountesy</div>
+            <div class="brand-tagline">Learn Smart, Grow Fast, Be Accounting Expert</div>
         </div>
-        <div class="top-right" style="display:flex; align-items:center; gap:25px;">
-            <div style="position:relative; cursor:pointer;">
-                <i data-lucide="bell"></i><span class="notif-dot"></span>
-            </div>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:25px;">
+        <div style="position:relative; cursor:pointer;" onclick="toggleMenu('notifMenu')">
+            <i data-lucide="bell"></i><span class="notif-dot"></span>
+            <div id="notifMenu" class="dropdown-menu"><a>New System Update</a></div>
+        </div>
+        <div style="position:relative; cursor:pointer;" onclick="toggleMenu('profileMenu')">
             <div class="avatar">D</div>
+            <div id="profileMenu" class="dropdown-menu">
+                <a href="/account">Account Settings</a>
+                <a href="/auth/logout">Logout</a>
+            </div>
         </div>
     </div>
+</div>
 
-    <div class="sidebar" id="sidebar">
-        <nav class="nav-section" style="display:flex; flex-direction:column; gap:15px;">
-            <a href="/" class="nav-item" style="color:white; text-decoration:none; display:flex; gap:10px;"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
-            <a href="/workspace" class="nav-item" style="color:white; text-decoration:none; display:flex; gap:10px;"><i data-lucide="briefcase"></i><span>Workspace</span></a>
-            <a href="/pricing" class="nav-item" style="color:white; text-decoration:none; display:flex; gap:10px;"><i data-lucide="credit-card"></i><span>Pricing</span></a>
-            <a href="/history" class="nav-item" style="color:white; text-decoration:none; display:flex; gap:10px;"><i data-lucide="history"></i><span>History</span></a>
-            {% if request.url.path.startswith('/admin') %}
-            <a href="/admin" class="nav-item" style="color:white; text-decoration:none; display:flex; gap:10px;"><i data-lucide="shield"></i><span>Admin</span></a>
-            {% endif %}
-        </nav>
-        <div class="sponsor-box">
-            <div class="sponsor-text" style="font-size:10px;">Sponsored by</div>
-            <div class="sponsor-text" style="font-size:14px; font-weight:600; margin:5px 0;">Uday Mondal | Tax Consultant</div>
-            <img src="/static/logo1.png" style="width:50px; border-radius:5px;">
-        </div>
+<div class="sidebar" id="sidebar">
+    <nav style="display:flex; flex-direction:column; gap:12px;">
+        <a href="/" class="nav-item"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
+        <a href="/workspace" class="nav-item"><i data-lucide="briefcase"></i><span>Workspace</span></a>
+        <a href="/pricing" class="nav-item"><i data-lucide="credit-card"></i><span>Pricing</span></a>
+        <a href="/history" class="nav-item"><i data-lucide="history"></i><span>History</span></a>
+        <a href="/features" class="nav-item"><i data-lucide="star"></i><span>Features</span></a>
+    </nav>
+
+    <div class="sponsor-info" style="text-align:center; padding-top:20px; border-top:1px solid rgba(255,255,255,0.1);">
+        <p style="font-size:10px; opacity:0.7;">Proudly Sponsored by</p>
+        <p style="font-size:12px; font-weight:600;">Uday Mondal | Tax Consultant</p>
+        <img src="/static/logo1.png" style="width:50px; border-radius:8px;">
     </div>
+</div>
 
-    <div class="main" style="margin-left:340px; padding:50px;">
-        {% block content %}{% endblock %}
-        <footer class="footer">
-            © 2026 Accountesy | Created by <strong>Debasish Biswas</strong>
-        </footer>
-    </div>
+<div class="main" style="margin-left:320px; padding:40px;">
+    {% block content %}{% endblock %}
+</div>
 
-    <script>
-        function toggleSidebar() { document.getElementById("sidebar").classList.toggle("mini"); }
-        lucide.createIcons();
-    </script>
+<div class="footer-menu">
+    <span>© 2026 Accountesy</span>
+    <span>Created by <strong>Debasish Biswas</strong></span>
+    <a href="/pricing" style="color:white; text-decoration:none;">Plans</a>
+    <a href="/history" style="color:white; text-decoration:none;">History</a>
+</div>
+
+<script>
+    function toggleSidebar() { document.getElementById("sidebar").classList.toggle("mini"); }
+    function toggleMenu(id) { 
+        var menu = document.getElementById(id);
+        menu.classList.toggle("show");
+    }
+    lucide.createIcons();
+</script>
 </body>
 </html>
