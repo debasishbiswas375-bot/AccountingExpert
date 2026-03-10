@@ -10,16 +10,20 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import StreamingResponse
 from bs4 import BeautifulSoup
 
-# --- PATH & APP CONFIG ---
+# --- 1. SMART PATH CALCULATION ---
+# Forces the app to see the 'Accountesy' folder correctly on Render
 app_dir = os.path.dirname(os.path.abspath(__file__)) 
 root_dir = os.path.dirname(app_dir) 
 sys.path.append(app_dir)
 
 app = FastAPI(title="Accountesy")
+
+# --- 2. MOUNTING & TEMPLATES ---
+# Points to Accountesy/static and Accountesy/templates
 app.mount("/static", StaticFiles(directory=os.path.join(root_dir, "static")), name="static")
 templates = Jinja2Templates(directory=os.path.join(root_dir, "templates"))
 
-# --- UNIVERSAL ENGINE ---
+# --- 3. UNIVERSAL PARSER ---
 def universal_parser(content, filename):
     if filename.endswith('.pdf'):
         with pdfplumber.open(io.BytesIO(content)) as pdf:
@@ -32,6 +36,7 @@ def universal_parser(content, filename):
     else:
         df = pd.read_excel(io.BytesIO(content), engine='openpyxl')
 
+    # Fix: Remove slashes and newlines from XML tags
     def clean_tag(name):
         name = str(name).replace('\n', ' ').strip()
         name = re.sub(r'[^a-zA-Z0-9_]', '_', name) 
@@ -40,7 +45,7 @@ def universal_parser(content, filename):
     df.columns = [clean_tag(c) for c in df.columns]
     return df
 
-# --- ROUTES ---
+# --- 4. ROUTES ---
 @app.get("/")
 async def landing(request: Request): return templates.TemplateResponse("landing.html", {"request": request})
 
@@ -53,10 +58,11 @@ async def history(request: Request): return templates.TemplateResponse("history.
 @app.get("/account")
 async def account(request: Request): return templates.TemplateResponse("account.html", {"request": request})
 
-# --- RECTIFIED CONVERSION ENGINE (Matches working tally.xml) ---
+# --- 5. TALLY CONVERSION ENGINE (Strict XML) ---
 @app.post("/convert/process")
 async def process_conversion(bank_file: UploadFile = File(...), master_file: UploadFile = File(...)):
     try:
+        # Parse Tally Ledgers
         master_content = await master_file.read()
         soup = BeautifulSoup(master_content, "html.parser")
         ledgers = [td.get_text().strip() for td in soup.find_all('td') if 'italic' in str(td.get('style'))]
@@ -68,7 +74,6 @@ async def process_conversion(bank_file: UploadFile = File(...), master_file: Upl
         xml_output = '<ENVELOPE><HEADER><TALLYREQUEST>Import Data</TALLYREQUEST></HEADER><BODY><IMPORTDATA><REQUESTDESC><REPORTNAME>Vouchers</REPORTNAME></REQUESTDESC><REQUESTDATA>'
         
         for _, row in df.iterrows():
-            # Standardize fields for Tally
             date_raw = str(row.get('Date', '')).replace('/', '').split(' ')[0]
             narration = str(row.get('Narration', 'Bank Transaction')).replace('&', '&amp;')
             debit = str(row.get('Debit', '')).replace(',', '') or "0"
@@ -76,7 +81,6 @@ async def process_conversion(bank_file: UploadFile = File(...), master_file: Upl
             amount = debit if float(debit or 0) > 0 else credit
             vch_type = "Payment" if float(debit or 0) > 0 else "Receipt"
             
-            # Smart Mapping Logic
             suggested_ledger = "Suspenses"
             for ledger in ledgers:
                 if ledger.upper() in narration.upper():
@@ -108,7 +112,7 @@ async def process_conversion(bank_file: UploadFile = File(...), master_file: Upl
         return StreamingResponse(
             io.BytesIO(xml_output.encode('utf-8')), 
             media_type="application/xml",
-            headers={"Content-Disposition": "attachment; filename=Accountesy_Final_Tally.xml"}
+            headers={"Content-Disposition": "attachment; filename=Accountesy_Import_Ready.xml"}
         )
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error: {str(e)}")
