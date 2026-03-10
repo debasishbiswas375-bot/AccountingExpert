@@ -1,77 +1,73 @@
-/* ================= GLOBAL STYLES ================= */
-body {
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    color: white;
-    background: linear-gradient(135deg, #6bb6ff 0%, #3d8bfd 50%, #1f56c2 100%);
-    min-height: 100vh;
-    position: relative;
-    overflow-x: hidden;
-}
+import io, re, pandas as pd, pdfplumber
+from bs4 import BeautifulSoup
 
-/* Watermark background fix */
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background: url("/static/b-logo.png") repeat;
-    background-size: 60px;
-    opacity: 0.05;
-    z-index: -1;
-    pointer-events: none;
-}
+async def get_preview_data(bank_file, master_file):
+    # 1. Parse Masters
+    master_content = await master_file.read()
+    soup = BeautifulSoup(master_content, "html.parser")
+    tally_ledgers = [td.get_text().strip() for td in soup.find_all('td') if 'italic' in str(td.get('style'))]
 
-/* ================= TOPBAR ================= */
-.topbar {
-    height: 90px;
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(20px);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 50px;
-    position: fixed;
-    top: 0; width: 100%; z-index: 2000;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
+    # 2. Extract Data autonomously
+    bank_content = await bank_file.read()
+    all_rows = []
+    with pdfplumber.open(io.BytesIO(bank_content)) as pdf:
+        for page in pdf.pages:
+            table = page.extract_table()
+            if table: all_rows.extend(table)
+    
+    # 3. FIX: Dynamic Voucher Date detection
+    header_idx = next((i for i, r in enumerate(all_rows) if any('date' in str(c).lower() for c in r if c)), 0)
+    df = pd.DataFrame(all_rows[header_idx+1:], columns=all_rows[header_idx])
+    date_col = next((c for c in df.columns if 'date' in str(c).lower()), df.columns[0])
 
-.top-left { display: flex; align-items: center; gap: 20px; }
-.brand-logo { height: 60px; }
-.brand-name { font-size: 24px; font-weight: 700; }
-.brand-tagline { font-size: 11px; opacity: 0.7; }
+    preview_results = []
+    for _, row in df.iterrows():
+        raw_date = str(row[date_col]).strip()
+        if not re.search(r'\d', raw_date) or 'date' in raw_date.lower(): continue
 
-/* ================= SIDEBAR ================= */
-.sidebar {
-    position: fixed;
-    top: 110px; left: 30px; width: 240px;
-    height: calc(100vh - 200px);
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(30px);
-    border-radius: 24px;
-    padding: 25px 15px;
-    display: flex; flex-direction: column; justify-content: space-between;
-    z-index: 1000; transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
+        narr = str(row.get('Narration', row.get('Description', ''))).replace('\n', ' ').upper()
+        # Clean numeric data
+        debit = re.sub(r'[^\d.]', '', str(row.get('Debit', row.get('Withdrawal', '0')))) or "0"
+        credit = re.sub(r'[^\d.]', '', str(row.get('Credit', row.get('Deposit', '0')))) or "0"
 
-.nav-item {
-    display: flex; align-items: center; gap: 15px; /* Fixes overlap */
-    padding: 12px 18px; border-radius: 14px;
-    text-decoration: none; color: white; transition: 0.2s;
-    font-weight: 500;
-}
-.nav-item:hover { background: rgba(255, 255, 255, 0.2); }
+        # 4. AI Mapping with Suspense Tagging
+        suggestions = [l for l in tally_ledgers if l.upper() in narr or l.upper()[:4] in narr]
+        
+        is_suspense = len(suggestions) != 1
+        final_narr = f"{narr} [Suspense]" if is_suspense else narr
+        final_ledger = suggestions[0] if len(suggestions) == 1 else "Suspense A/c"
 
-/* ================= FOOTER ================= */
-.main-footer {
-    position: fixed; bottom: 0; left: 0; width: 100%; height: 60px;
-    background: rgba(15, 23, 42, 0.9);
-    backdrop-filter: blur(10px);
-    display: flex; align-items: center; justify-content: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    z-index: 3000;
-}
+        preview_results.append({
+            "date": raw_date,
+            "narration": final_narr,
+            "amount": debit if float(debit) > 0 else credit,
+            "type": "Payment" if float(debit) > 0 else "Receipt",
+            "ledger": final_ledger,
+            "options": list(set(suggestions + ["Suspense A/c"]))[:4],
+            "is_suspense": is_suspense
+        })
+    return preview_results, tally_ledgers
 
-/* Mini Mode behavior */
-.sidebar.mini { width: 60px; padding: 25px 10px; }
-.sidebar.mini span, .sidebar.mini .sponsor-box { display: none; }
+# CRITICAL FIX: Explicitly define the missing function for the import
+def generate_tally_xml(transactions):
+    xml = '<ENVELOPE><HEADER><TALLYREQUEST>Import Data</TALLYREQUEST></HEADER><BODY><IMPORTDATA><REQUESTDESC><REPORTNAME>Vouchers</REPORTNAME></REQUESTDESC><REQUESTDATA>'
+    for tx in transactions:
+        clean_date = re.sub(r'\D', '', tx['date'])[:8]
+        xml += f"""
+        <TALLYMESSAGE xmlns:UDF="TallyUDF">
+            <VOUCHER VCHTYPE="{tx['type']}" ACTION="Create">
+                <DATE>{clean_date}</DATE>
+                <NARRATION>{tx['narration']}</NARRATION>
+                <ALLLEDGERENTRIES.LIST>
+                    <LEDGERNAME>{tx['ledger']}</LEDGERNAME>
+                    <ISDEEMEDPOSITIVE>{"Yes" if tx['type'] == 'Payment' else "No"}</ISDEEMEDPOSITIVE>
+                    <AMOUNT>{("-" if tx['type'] == 'Payment' else "") + tx['amount']}</AMOUNT>
+                </ALLLEDGERENTRIES.LIST>
+                <ALLLEDGERENTRIES.LIST>
+                    <LEDGERNAME>State Bank of India-37017480905</LEDGERNAME>
+                    <ISDEEMEDPOSITIVE>{"No" if tx['type'] == 'Payment' else "Yes"}</ISDEEMEDPOSITIVE>
+                    <AMOUNT>{"-" if tx['type'] == 'Receipt' else ""}{tx['amount']}</AMOUNT>
+                </ALLLEDGERENTRIES.LIST>
+            </VOUCHER>
+        </TALLYMESSAGE>"""
+    return xml + '</REQUESTDATA></IMPORTDATA></BODY></ENVELOPE>'
