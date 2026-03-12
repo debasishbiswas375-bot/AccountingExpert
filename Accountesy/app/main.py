@@ -8,26 +8,27 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 # --- 1. PATH CONFIGURATION ---
+# Ensures the app can find the 'logic' folder even on Render
 app_dir = os.path.dirname(os.path.abspath(__file__)) 
 if app_dir not in sys.path:
     sys.path.append(app_dir)
 
-# Import the logic from your processor
+# Import the core logic from your processor.py
 from logic.processor import get_preview_data, generate_tally_xml, save_pattern
 
 app = FastAPI(title="Accountesy AI Engine")
 
-# Setup Static and Templates
+# Setup Static files (CSS/Images) and Jinja2 Templates
 root_dir = os.path.dirname(app_dir) 
 app.mount("/static", StaticFiles(directory=os.path.join(root_dir, "static")), name="static")
 templates = Jinja2Templates(directory=os.path.join(root_dir, "templates"))
 
-# Data model for AI Learning
+# Data model for the AI Learning API
 class LearningData(BaseModel):
     narration: str
     ledger: str
 
-# --- 2. PAGE ROUTES (Mapping your templates) ---
+# --- 2. PAGE NAVIGATION ROUTES ---
 
 @app.get("/")
 async def landing(request: Request):
@@ -41,6 +42,20 @@ async def workspace(request: Request):
 async def history(request: Request):
     return templates.TemplateResponse("history.html", {"request": request})
 
+@app.get("/account")
+async def account(request: Request):
+    # This maps to the user data seen in your Supabase screenshot
+    return templates.TemplateResponse("account.html", {
+        "request": request,
+        "user_name": "Debasish Biswas",
+        "user_email": "debasish.biswas375@gmail.com",
+        "user_credits": 9999.00
+    })
+
+@app.get("/pricing")
+async def pricing(request: Request):
+    return templates.TemplateResponse("pricing.html", {"request": request})
+
 @app.get("/login")
 async def login(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
@@ -49,19 +64,11 @@ async def login(request: Request):
 async def register(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
 
-@app.get("/account")
-async def account(request: Request):
-    return templates.TemplateResponse("account.html", {"request": request})
-
-@app.get("/pricing")
-async def pricing(request: Request):
-    return templates.TemplateResponse("pricing.html", {"request": request})
-
-# --- 3. AI & CREDIT API ROUTES ---
+# --- 3. AI & CREDIT ENGINE API ---
 
 @app.post("/convert/preview")
 async def preview_api(bank_file: UploadFile = File(...), master_file: UploadFile = File(None)):
-    """Processes the upload and returns AI suggestions."""
+    """Step 1: AI scans the file and suggests ledgers in the table."""
     try:
         transactions, _ = await get_preview_data(bank_file, master_file)
         return {"transactions": transactions}
@@ -70,36 +77,38 @@ async def preview_api(bank_file: UploadFile = File(...), master_file: UploadFile
 
 @app.post("/convert/final")
 async def final_api(request: Request):
-    """Generates Tally XML and calculates $0.1 credit deduction."""
+    """Step 2: Generate XML and calculate the 0.1 credit deduction."""
     try:
         data = await request.json()
-        # Generate the XML and the credit math
+        
+        # Get XML string and credit math from processor.py
         xml_str, credit_cost, compressed_data = generate_tally_xml(
             data['transactions'], 
             data.get('bank_name', 'Bank Account')
         )
         
-        # We return JSON so the workspace can show the Credit Deduction alert
+        # Return data matching your conversion_history table columns
         return JSONResponse({
             "xml": xml_str,
             "credits_used": credit_cost,
-            "count": len(data['transactions'])
+            "voucher_count": len(data['transactions']),
+            "status": "Available"
         })
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
 @app.post("/learn")
 async def learn_api(data: LearningData):
-    """The Auto-Learning Endpoint."""
+    """Step 3: Save manual 'Nil' corrections to the AI memory."""
     try:
         save_pattern(data.narration, data.ledger)
-        return {"status": "success"}
+        return {"status": "success", "message": "Pattern learned successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# --- 4. RENDER DEPLOYMENT BINDING ---
+# --- 4. RENDER / LOCAL BINDING ---
 if __name__ == "__main__":
     import uvicorn
-    # Render provides a PORT environment variable
+    # PORT is dynamically assigned by Render; defaults to 10000 locally
     port = int(os.environ.get("PORT", 10000))
     uvicorn.run(app, host="0.0.0.0", port=port)
