@@ -6,6 +6,7 @@ ACCOUNTING_RULES = {
     "CONTRA_CASH": ["CASH", "ATM", "SELF", "WITHDRAWAL", "DEPOSIT"]
 }
 
+# These map to standard Tally groups
 GROUP_MAPPINGS = {
     "Bank Charges": "Indirect Expenses",
     "GST/Taxes": "Duties & Taxes",
