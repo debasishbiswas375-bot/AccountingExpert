@@ -1,5 +1,7 @@
 import io, re, json, os, pandas as pd, pdfplumber
 from bs4 import BeautifulSoup
+# Import the Knowledge Base
+from logic.mapper import auto_ai_search, GROUP_MAPPINGS
 
 MEMORY_FILE = os.path.join(os.path.dirname(__file__), "learning_db.json")
 
@@ -9,18 +11,9 @@ def load_memory():
     return {}
 
 async def get_preview_data(bank_file, master_file=None):
-    # 1. THE AI KNOWLEDGE BASE
-    # Default Tally structures prioritized by accounting standards
-    base_ledgers = {
-        "Bank Charges": "Indirect Expenses",
-        "Cash": "Cash-in-Hand",
-        "Suspense A/c": "Suspense Account",
-        "GST/Taxes": "Duties & Taxes",
-        "Round Off": "Indirect Expenses"
-    }
-    
+    # 1. INITIALIZE LEDGERS
     memory = load_memory()
-    tally_ledgers = list(base_ledgers.keys())
+    tally_ledgers = list(GROUP_MAPPINGS.keys())
     
     if master_file:
         try:
@@ -30,10 +23,11 @@ async def get_preview_data(bank_file, master_file=None):
             tally_ledgers = list(set(tally_ledgers + custom))
         except: pass
 
-    # 2. MULTI-FORMAT EXTRACTION ENGINE
+    # 2. MULTI-FORMAT EXTRACTION (PDF/EXCEL/CSV)
     filename = bank_file.filename.lower()
     content = await bank_file.read()
-    
+    df = pd.DataFrame()
+
     if filename.endswith('.pdf'):
         all_rows = []
         with pdfplumber.open(io.BytesIO(content)) as pdf:
@@ -47,7 +41,7 @@ async def get_preview_data(bank_file, master_file=None):
     else:
         df = pd.read_csv(io.BytesIO(content))
 
-    # Clean Headers for Search Logic
+    # Dynamic Voucher Date Recovery
     df.columns = [str(c).strip().lower() for c in df.columns]
     date_col = next((c for c in df.columns if 'date' in c), df.columns[0])
     narr_col = next((c for c in df.columns if any(k in c for k in ['narr', 'desc', 'partic'])), None)
@@ -66,60 +60,44 @@ async def get_preview_data(bank_file, master_file=None):
         amt = debit if is_pay else credit
 
         # --- 3. AUTO-AI SEARCH & SORT HIERARCHY ---
-        tx_ledger = "Suspense A/c"
-        confidence_score = 0 # 0=Low (Red), 1=Rule-Based (Yellow), 2=Learned (Green)
-        
-        # Level 1: Search Learned Memory (High Confidence)
         pattern = re.sub(r'\d+', '', narr).strip()[:20]
-        if pattern in memory:
-            tx_ledger, confidence_score = memory[pattern], 2
-            
-        # Level 2: Rule-Based Search (AI Logic)
-        elif any(k in narr for k in ["CHRG", "FEE", "MAINTENANCE"]):
-            tx_ledger, confidence_score = "Bank Charges", 1
-        elif any(k in narr for k in ["GST", "TAX", "DUTY"]):
-            tx_ledger, confidence_score = "GST/Taxes", 1
-        elif any(k in narr for k in ["CASH", "ATM", "SELF"]):
-            tx_ledger, confidence_score = "Cash", 1
-            
-        # Level 3: Fuzzy Master Matching
-        else:
-            matches = [l for l in tally_ledgers if l.upper() in narr or l.upper()[:5] in narr]
-            if len(matches) == 1:
-                tx_ledger, confidence_score = matches[0], 2
+        confidence = 0
         
-        # Determine Voucher Type
-        if tx_ledger == "Cash": vch_type = "Contra"
-        else: vch_type = "Payment" if is_pay else "Receipt"
+        # Priority 1: Learned Memory
+        if pattern in memory:
+            tx_ledger, confidence = memory[pattern], 2
+        else:
+            # Priority 2: AI Rule Search from mapper.py
+            tx_ledger, confidence = auto_ai_search(narr)
+            
+            # Priority 3: Fuzzy Master Match (if Rule Search failed)
+            if confidence == 0:
+                matches = [l for l in tally_ledgers if l.upper() in narr or l.upper()[:5] in narr]
+                if len(matches) == 1:
+                    tx_ledger, confidence = matches[0], 2
+
+        # Finalize Voucher Type
+        vch_type = "Contra" if tx_ledger == "Cash" else ("Payment" if is_pay else "Receipt")
 
         results.append({
-            "date": raw_date,
-            "narration": narr,
-            "amount": amt,
-            "type": vch_type,
-            "ledger": tx_ledger,
-            "confidence": confidence_score, # Used for sorting in frontend
-            "options": list(set([tx_ledger, "Bank Charges", "Cash", "Suspense A/c"]))[:5]
+            "date": raw_date, "narration": narr, "amount": amt,
+            "type": vch_type, "ledger": tx_ledger, "confidence": confidence,
+            "options": list(set([tx_ledger, "Bank Charges", "Cash", "Suspense A/c", "GST/Taxes"]))[:5]
         })
 
-    # SORT: Move low confidence (Suspense) to the top so user sees them first
+    # Sort so Low Confidence (Suspense) entries appear first in the Workspace
     results.sort(key=lambda x: x['confidence'])
-    
     return results, tally_ledgers
 
 def generate_tally_xml(transactions, bank_name="Bank Account"):
-    """
-    Final XML with Auto-Creation of Missing Ledgers
-    """
+    """Strict Tally XML with Auto-Creation of Missing Ledgers"""
     xml = '<ENVELOPE><HEADER><TALLYREQUEST>Import Data</TALLYREQUEST></HEADER><BODY><IMPORTDATA><REQUESTDESC><REPORTNAME>Vouchers</REPORTNAME></REQUESTDESC><REQUESTDATA>'
     
-    # Auto-Create Group Mappings
-    ledger_groups = {"Bank Charges": "Indirect Expenses", "GST/Taxes": "Duties & Taxes"}
-    for led, grp in ledger_groups.items():
+    # Auto-Create Standard Ledgers under correct Groups
+    for led, grp in GROUP_MAPPINGS.items():
         xml += f'<TALLYMESSAGE xmlns:UDF="TallyUDF"><LEDGER NAME="{led}" ACTION="Create"><PARENT>{grp}</PARENT></LEDGER></TALLYMESSAGE>'
 
     for tx in transactions:
-        # Standard Date formatting logic...
         clean_date = re.sub(r'\D', '', tx['date'])[:8]
         if len(clean_date) == 8 and not clean_date.startswith(('20', '19')):
             clean_date = clean_date[4:] + clean_date[2:4] + clean_date[:2]
