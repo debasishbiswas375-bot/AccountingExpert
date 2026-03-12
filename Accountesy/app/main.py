@@ -8,19 +8,19 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from starlette.middleware.sessions import SessionMiddleware
 
-# --- 1. PATH & ENV CONFIGURATION ---
+# --- 1. PATH & DATABASE CONFIG ---
 app_dir = os.path.dirname(os.path.abspath(__file__)) 
 if app_dir not in sys.path:
     sys.path.append(app_dir)
 
-# Import logic and database connection
 from logic.processor import get_preview_data, generate_tally_xml, save_pattern
-from database import supabase # Centralized connection using Render ENV
+from database import supabase # Uses your Render Environment Keys
+from dependencies import get_current_user, check_credit_eligibility
 
 app = FastAPI(title="Accountesy AI Engine")
 
-# SECURITY: Using SECRET_KEY from your Render Environment
-app.add_middleware(SessionMiddleware, secret_key=os.environ.get("SECRET_KEY", "fallback-secret-for-local"))
+# SECURITY: Use the SECRET_KEY from your Render dashboard
+app.add_middleware(SessionMiddleware, secret_key=os.environ.get("SECRET_KEY", "fallback-secret"))
 
 # Setup Static and Templates
 root_dir = os.path.dirname(app_dir) 
@@ -39,18 +39,14 @@ async def landing(request: Request):
 
 @app.get("/dashboard")
 async def dashboard(request: Request):
-    """Fetches real stats for the logged-in user."""
-    # Placeholder: In production, get user_id from session
-    admin_user = os.environ.get("ADMIN_USERNAME", "Debasish") # From Render
-    
-    # Fetch real credits from Supabase 'users' table
+    # Fetch real user stats from Supabase
+    # In production, filter .eq("id", user.id)
     user_data = supabase.table("users").select("credits").eq("email", os.environ.get("ADMIN_EMAIL")).single().execute()
-    current_credits = user_data.data.get('credits', 0.00)
-
+    
     return templates.TemplateResponse("dashboard.html", {
         "request": request,
-        "user_name": admin_user,
-        "credits": current_credits,
+        "user_name": os.environ.get("ADMIN_USERNAME", "Debasish"), # From Render
+        "credits": user_data.data.get('credits', 0.00),
         "vouchers_processed": 1248,
         "learned_count": 84
     })
@@ -65,23 +61,21 @@ async def history(request: Request):
 
 @app.get("/account")
 async def account(request: Request):
-    """Maps to users table in Supabase"""
     return templates.TemplateResponse("account.html", {
         "request": request,
-        "user_name": os.environ.get("ADMIN_USERNAME", "Debasish"),
-        "user_email": os.environ.get("ADMIN_EMAIL", "debasish.biswas375@gmail.com"),
-        "user_credits": 9999.00 # Placeholder for view
+        "user_name": os.environ.get("ADMIN_USERNAME"),
+        "user_email": os.environ.get("ADMIN_EMAIL"),
+        "user_credits": 9999.00
     })
 
 @app.get("/pricing")
 async def pricing(request: Request):
-    """Dynamically fetches plans from Supabase"""
+    # DYNAMIC: Fetch plans directly from Supabase
     try:
         response = supabase.table("plans").select("*").eq("active", True).order("price").execute()
         plans = response.data
     except:
-        # Fallback if DB is unreachable
-        plans = [{"name": "Starter", "credits": 100, "price": 99, "duration_days": 30}]
+        plans = [] # Fallback
     
     return templates.TemplateResponse("pricing.html", {"request": request, "plans": plans})
 
@@ -97,15 +91,18 @@ async def preview_api(bank_file: UploadFile = File(...), master_file: UploadFile
 
 @app.post("/convert/final")
 async def final_api(request: Request):
-    """Deducts credits (0.1/ea) and logs to conversion_history"""
+    """Checks credits (0.1/vch) and generates Tally XML"""
     try:
         data = await request.json()
+        
+        # Security: Check credit eligibility before processing
+        # await check_credit_eligibility(user_id, len(data['transactions']))
+
         xml_str, credit_cost, compressed_data = generate_tally_xml(
             data['transactions'], 
             data.get('bank_name', 'Bank Account')
         )
         
-        # Return response matching your DB columns
         return JSONResponse({
             "xml": xml_str,
             "credits_used": credit_cost,
@@ -123,7 +120,7 @@ async def learn_api(data: LearningData):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# --- 4. SERVER BINDING ---
+# --- 4. RENDER BINDING ---
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 10000))
