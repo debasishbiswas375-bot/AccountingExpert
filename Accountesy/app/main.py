@@ -1,50 +1,62 @@
-import sys, os
-from fastapi import FastAPI, Request, Depends
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-from starlette.middleware.sessions import SessionMiddleware
-from database import supabase 
-from dependencies import get_current_user
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Accountesy AI</title>
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css"> <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
 
-app = FastAPI()
-# Secret key from your Render ENV
-app.add_middleware(SessionMiddleware, secret_key=os.environ.get("SECRET_KEY", "accountesy-secure"))
+<div class="topbar">
+    <div class="top-left">
+        <button class="hamburger" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+        <img src="/static/logo.png" class="brand-logo">
+        <div class="brand-text">
+            <div class="brand-name">Accountesy</div>
+            <div class="brand-tagline">Learn Smart, Grow Fast, Be Accounting Expert</div>
+        </div>
+    </div>
 
-app_dir = os.path.dirname(os.path.abspath(__file__)) 
-root_dir = os.path.dirname(app_dir) 
-app.mount("/static", StaticFiles(directory=os.path.join(root_dir, "static")), name="static")
-templates = Jinja2Templates(directory=os.path.join(root_dir, "templates"))
+    <div class="top-right">
+        <div class="notification-container">
+            <div class="notification-icon" onclick="toggleNotification()">
+                <i data-lucide="bell"></i><span class="notif-dot"></span>
+            </div>
+        </div>
+        <div class="avatar" onclick="toggleProfileMenu()">
+            {{ user_name[0] if user_name else 'U' }}
+        </div>
+    </div>
+</div>
 
-# --- PAGE ROUTES ---
+<div class="sidebar" id="sidebar">
+    <div class="nav-section">
+        <a href="/" class="nav-item"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
+        <a href="/workspace" class="nav-item"><i data-lucide="plus-square"></i><span>Workspace</span></a>
+        <a href="/history" class="nav-item"><i data-lucide="history"></i><span>History</span></a>
+        <a href="/plans" class="nav-item"><i data-lucide="credit-card"></i><span>Plans</span></a>
+        <a href="/account" class="nav-item"><i data-lucide="user"></i><span>Account</span></a>
+        
+        {% if user_name == 'deba1234' %}
+        <a href="/admin" class="nav-item"><i data-lucide="shield"></i><span>Admin Panel</span></a>
+        {% endif %}
+    </div>
 
-@app.get("/")
-async def dashboard(request: Request, user=Depends(get_current_user)):
-    """Dynamic user-wise data fetching"""
-    user_record = supabase.table("users").select("*").eq("id", user.id).single().execute()
-    return templates.TemplateResponse("dashboard.html", {
-        "request": request,
-        "user_name": user_record.data.get('full_name', 'User'),
-        "credits": user_record.data.get('credits', 0.00)
-    })
+    <div class="sponsor-box">
+        <div class="sponsor-title">Sponsored by</div>
+        <div class="sponsor-name">Uday Mondal | Tax Consultant Advocate</div>
+        <img src="/static/logo1.png" class="sponsor-logo">
+    </div>
+</div>
 
-@app.get("/workspace")
-async def workspace(request: Request):
-    return templates.TemplateResponse("workspace.html", {"request": request})
+<div class="main">
+    {% block content %}{% endblock %}
+</div>
 
-@app.get("/history")
-async def history(request: Request):
-    return templates.TemplateResponse("history.html", {"request": request})
-
-@app.get("/plans")
-async def plans(request: Request):
-    """Fetches the 4 plans from Supabase"""
-    res = supabase.table("plans").select("*").eq("active", True).order("price").execute()
-    return templates.TemplateResponse("pricing.html", {"request": request, "plans": res.data})
-
-@app.get("/account")
-async def account(request: Request):
-    return templates.TemplateResponse("account.html", {"request": request})
-
-@app.get("/admin")
-async def admin(request: Request):
-    return templates.TemplateResponse("admin.html", {"request": request})
+<script>
+    function toggleSidebar(){ document.getElementById("sidebar").classList.toggle("mini"); }
+    lucide.createIcons();
+</script>
+</body>
+</html>
