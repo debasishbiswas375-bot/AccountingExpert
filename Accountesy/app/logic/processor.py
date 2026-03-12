@@ -1,6 +1,5 @@
-import io, re, json, os, pandas as pd, pdfplumber
+import io, re, json, os, gzip, pandas as pd, pdfplumber
 from bs4 import BeautifulSoup
-# Import the Knowledge Base
 from logic.mapper import auto_ai_search, GROUP_MAPPINGS
 
 MEMORY_FILE = os.path.join(os.path.dirname(__file__), "learning_db.json")
@@ -10,113 +9,83 @@ def load_memory():
         with open(MEMORY_FILE, "r") as f: return json.load(f)
     return {}
 
+def save_pattern(narration, ledger):
+    memory = load_memory()
+    pattern = re.sub(r'\d+', '', narration).strip().upper()[:25]
+    memory[pattern] = ledger
+    with open(MEMORY_FILE, "w") as f: json.dump(memory, f)
+
 async def get_preview_data(bank_file, master_file=None):
-    # 1. INITIALIZE LEDGERS
+    # Standard AI Search & Matching Logic
     memory = load_memory()
     tally_ledgers = list(GROUP_MAPPINGS.keys())
-    
     if master_file:
         try:
-            content = await master_file.read()
-            soup = BeautifulSoup(content, "html.parser")
-            custom = [td.get_text().strip() for td in soup.find_all('td') if 'italic' in str(td.get('style'))]
-            tally_ledgers = list(set(tally_ledgers + custom))
+            c = await master_file.read(); s = BeautifulSoup(c, "html.parser")
+            tally_ledgers = list(set(tally_ledgers + [td.get_text().strip() for td in s.find_all('td') if 'italic' in str(td.get('style'))]))
         except: pass
 
-    # 2. MULTI-FORMAT EXTRACTION (PDF/EXCEL/CSV)
+    # Extract Data (PDF/Excel)
     filename = bank_file.filename.lower()
     content = await bank_file.read()
-    df = pd.DataFrame()
-
     if filename.endswith('.pdf'):
         all_rows = []
         with pdfplumber.open(io.BytesIO(content)) as pdf:
-            for page in pdf.pages:
-                table = page.extract_table()
-                if table: all_rows.extend(table)
-        header_idx = next((i for i, r in enumerate(all_rows) if any('date' in str(c).lower() for c in r if c)), 0)
-        df = pd.DataFrame(all_rows[header_idx+1:], columns=all_rows[header_idx])
-    elif filename.endswith(('.xlsx', '.xls')):
-        df = pd.read_excel(io.BytesIO(content))
-    else:
-        df = pd.read_csv(io.BytesIO(content))
-
-    # Dynamic Voucher Date Recovery
-    df.columns = [str(c).strip().lower() for c in df.columns]
-    date_col = next((c for c in df.columns if 'date' in c), df.columns[0])
-    narr_col = next((c for c in df.columns if any(k in c for k in ['narr', 'desc', 'partic'])), None)
-    debit_col = next((c for c in df.columns if any(k in c for k in ['debit', 'withdraw'])), None)
-    credit_col = next((c for c in df.columns if any(k in c for k in ['credit', 'deposit'])), None)
+            for p in pdf.pages:
+                if p.extract_table(): all_rows.extend(p.extract_table())
+        h_idx = next((i for i, r in enumerate(all_rows) if any('date' in str(c).lower() for c in r if c)), 0)
+        df = pd.DataFrame(all_rows[h_idx+1:], columns=all_rows[h_idx])
+    else: df = pd.read_excel(io.BytesIO(content))
 
     results = []
+    df.columns = [str(c).strip().lower() for c in df.columns]
+    d_col = next((c for c in df.columns if 'date' in c), df.columns[0])
+    n_col = next((c for c in df.columns if any(k in c for k in ['narr', 'desc'])), None)
+    db_col = next((c for c in df.columns if any(k in c for k in ['debit', 'withdraw'])), None)
+    cr_col = next((c for c in df.columns if any(k in c for k in ['credit', 'deposit'])), None)
+
     for _, row in df.iterrows():
-        raw_date = str(row[date_col]).strip()
-        if not re.search(r'\d', raw_date) or 'nan' in raw_date.lower(): continue
-
-        narr = str(row.get(narr_col, '')).upper()
-        debit = re.sub(r'[^\d.]', '', str(row.get(debit_col, '0'))) or "0"
-        credit = re.sub(r'[^\d.]', '', str(row.get(credit_col, '0'))) or "0"
+        raw_date = str(row[d_col]).strip()
+        if not re.search(r'\d', raw_date): continue
+        narr = str(row.get(n_col, '')).upper()
+        debit = re.sub(r'[^\d.]', '', str(row.get(db_col, '0'))) or "0"
+        credit = re.sub(r'[^\d.]', '', str(row.get(cr_col, '0'))) or "0"
         is_pay = float(debit) > 0
-        amt = debit if is_pay else credit
-
-        # --- 3. AUTO-AI SEARCH & SORT HIERARCHY ---
-        pattern = re.sub(r'\d+', '', narr).strip()[:20]
-        confidence = 0
         
-        # Priority 1: Learned Memory
-        if pattern in memory:
-            tx_ledger, confidence = memory[pattern], 2
+        # AI Logic
+        pat = re.sub(r'\d+', '', narr).strip()[:20]
+        if pat in memory: tx_ledger, conf = memory[pat], 2
         else:
-            # Priority 2: AI Rule Search from mapper.py
-            tx_ledger, confidence = auto_ai_search(narr)
-            
-            # Priority 3: Fuzzy Master Match (if Rule Search failed)
-            if confidence == 0:
-                matches = [l for l in tally_ledgers if l.upper() in narr or l.upper()[:5] in narr]
-                if len(matches) == 1:
-                    tx_ledger, confidence = matches[0], 2
-
-        # Finalize Voucher Type
-        vch_type = "Contra" if tx_ledger == "Cash" else ("Payment" if is_pay else "Receipt")
+            tx_ledger, conf = auto_ai_search(narr)
+            if conf == 0:
+                m = [l for l in tally_ledgers if l.upper() in narr or l.upper()[:5] in narr]
+                if len(m) == 1: tx_ledger, conf = m[0], 2
 
         results.append({
-            "date": raw_date, "narration": narr, "amount": amt,
-            "type": vch_type, "ledger": tx_ledger, "confidence": confidence,
-            "options": list(set([tx_ledger, "Bank Charges", "Cash", "Suspense A/c", "GST/Taxes"]))[:5]
+            "date": raw_date, "narration": narr, "amount": debit if is_pay else credit,
+            "type": "Contra" if tx_ledger == "Cash" else ("Payment" if is_pay else "Receipt"),
+            "ledger": tx_ledger, "confidence": conf,
+            "options": list(set([tx_ledger, "Bank Charges", "Cash", "Suspense A/c"]))[:4]
         })
-
-    # Sort so Low Confidence (Suspense) entries appear first in the Workspace
-    results.sort(key=lambda x: x['confidence'])
     return results, tally_ledgers
 
-def generate_tally_xml(transactions, bank_name="Bank Account"):
-    """Strict Tally XML with Auto-Creation of Missing Ledgers"""
-    xml = '<ENVELOPE><HEADER><TALLYREQUEST>Import Data</TALLYREQUEST></HEADER><BODY><IMPORTDATA><REQUESTDESC><REPORTNAME>Vouchers</REPORTNAME></REQUESTDESC><REQUESTDATA>'
+def generate_tally_xml(transactions, bank_name):
+    # Credit Logic: 0.1 per voucher
+    total_vouchers = len(transactions)
+    credits_used = round(total_vouchers * 0.1, 2)
     
-    # Auto-Create Standard Ledgers under correct Groups
+    # XML Header
+    xml = '<ENVELOPE><HEADER><TALLYREQUEST>Import Data</TALLYREQUEST></HEADER><BODY><IMPORTDATA><REQUESTDESC><REPORTNAME>Vouchers</REPORTNAME></REQUESTDESC><REQUESTDATA>'
+    # Auto-Create Ledgers
     for led, grp in GROUP_MAPPINGS.items():
-        xml += f'<TALLYMESSAGE xmlns:UDF="TallyUDF"><LEDGER NAME="{led}" ACTION="Create"><PARENT>{grp}</PARENT></LEDGER></TALLYMESSAGE>'
-
+        xml += f'<TALLYMESSAGE><LEDGER NAME="{led}" ACTION="Create"><PARENT>{grp}</PARENT></LEDGER></TALLYMESSAGE>'
+    
     for tx in transactions:
-        clean_date = re.sub(r'\D', '', tx['date'])[:8]
-        if len(clean_date) == 8 and not clean_date.startswith(('20', '19')):
-            clean_date = clean_date[4:] + clean_date[2:4] + clean_date[:2]
-
-        xml += f"""
-        <TALLYMESSAGE xmlns:UDF="TallyUDF">
-            <VOUCHER VCHTYPE="{tx['type']}" ACTION="Create">
-                <DATE>{clean_date}</DATE>
-                <NARRATION>{tx['narration']}</NARRATION>
-                <ALLLEDGERENTRIES.LIST>
-                    <LEDGERNAME>{tx['ledger']}</LEDGERNAME>
-                    <ISDEEMEDPOSITIVE>{"Yes" if tx['type'] == 'Payment' or (tx['type'] == 'Contra' and tx['ledger'] == 'Cash') else "No"}</ISDEEMEDPOSITIVE>
-                    <AMOUNT>{("-" if tx['type'] == 'Payment' or (tx['type'] == 'Contra' and tx['ledger'] == 'Cash') else "") + tx['amount']}</AMOUNT>
-                </ALLLEDGERENTRIES.LIST>
-                <ALLLEDGERENTRIES.LIST>
-                    <LEDGERNAME>{bank_name}</LEDGERNAME>
-                    <ISDEEMEDPOSITIVE>{"No" if tx['type'] == 'Payment' or (tx['type'] == 'Contra' and tx['ledger'] == 'Cash') else "Yes"}</ISDEEMEDPOSITIVE>
-                    <AMOUNT>{"-" if tx['type'] == 'Receipt' or (tx['type'] == 'Contra' and tx['ledger'] != 'Cash') else ""}{tx['amount']}</AMOUNT>
-                </ALLLEDGERENTRIES.LIST>
-            </VOUCHER>
-        </TALLYMESSAGE>"""
-    return xml + '</REQUESTDATA></IMPORTDATA></BODY></ENVELOPE>'
+        d = re.sub(r'\D', '', tx['date'])[:8]
+        if len(d) == 8 and not d.startswith(('20', '19')): d = d[4:] + d[2:4] + d[:2]
+        xml += f'<TALLYMESSAGE><VOUCHER VCHTYPE="{tx["type"]}" ACTION="Create"><DATE>{d}</DATE><NARRATION>{tx["narration"]}</NARRATION><ALLLEDGERENTRIES.LIST><LEDGERNAME>{tx["ledger"]}</LEDGERNAME><ISDEEMEDPOSITIVE>{"Yes" if tx["type"]=="Payment" or (tx["type"]=="Contra" and tx["ledger"]=="Cash") else "No"}</ISDEEMEDPOSITIVE><AMOUNT>{("-" if tx["type"]=="Payment" or (tx["type"]=="Contra" and tx["ledger"]=="Cash") else "") + tx["amount"]}</AMOUNT></ALLLEDGERENTRIES.LIST><ALLLEDGERENTRIES.LIST><LEDGERNAME>{bank_name}</LEDGERNAME><ISDEEMEDPOSITIVE>{"No" if tx["type"]=="Payment" or (tx["type"]=="Contra" and tx["ledger"]=="Cash") else "Yes"}</ISDEEMEDPOSITIVE><AMOUNT>{"-" if tx["type"]=="Receipt" or (tx["type"]=="Contra" and tx["ledger"]!="Cash") else ""}{tx["amount"]}</AMOUNT></ALLLEDGERENTRIES.LIST></VOUCHER></TALLYMESSAGE>'
+    
+    final_xml = xml + '</REQUESTDATA></IMPORTDATA></BODY></ENVELOPE>'
+    # Compress for Supabase
+    compressed_xml = gzip.compress(final_xml.encode('utf-8'))
+    return final_xml, credits_used, compressed_xml
