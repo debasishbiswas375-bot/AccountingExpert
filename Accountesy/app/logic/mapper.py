@@ -1,30 +1,34 @@
-import pandas as pd
-from rapidfuzz import process, utils
+# mapper.py - The Static AI Knowledge Base
 
-def intelligent_header_mapping(df: pd.DataFrame):
+# Major Search Keywords for Auto-Classification
+ACCOUNTING_RULES = {
+    "INDIRECT_EXPENSES": ["CHRG", "CHARGE", "FEE", "MAINTENANCE", "SMS", "ANNUAL", "RENEWAL"],
+    "DUTIES_AND_TAXES": ["GST", "TAX", "CGST", "SGST", "IGST", "VAT", "TDS"],
+    "CONTRA_CASH": ["CASH", "ATM", "SELF", "WITHDRAWAL", "DEPOSIT"],
+    "ROUND_OFF": ["ROUND", "OFF", "DIFF"]
+}
+
+# Default Group Mappings for Tally XML Auto-Creation
+GROUP_MAPPINGS = {
+    "Bank Charges": "Indirect Expenses",
+    "GST/Taxes": "Duties & Taxes",
+    "Cash": "Cash-in-Hand",
+    "Round Off": "Indirect Expenses"
+}
+
+def get_ledger_from_narr(narration):
     """
-    AI-powered column detection. 
-    Identifies Date, Narration, and Amount columns regardless of the bank's format.
+    Auto-AI Search logic to find the best ledger match
     """
-    # Clean column names
-    df.columns = [str(c).strip().upper() for c in df.columns]
+    narr = narration.upper()
     
-    mapping = {}
+    if any(k in narr for k in ACCOUNTING_RULES["INDIRECT_EXPENSES"]):
+        return "Bank Charges", 1 # Confidence Level 1
     
-    # Keyword search for core accounting fields
-    for col in df.columns:
-        if any(k in col for k in ['DATE', 'VAL DT', 'TRANSACTION DATE']):
-            mapping['Date'] = col
-        if any(k in col for k in ['PARTICULARS', 'NARRATION', 'DESCRIPTION', 'REMARKS']):
-            mapping['Narration'] = col
-        if any(k in col for k in ['DEBIT', 'WITHDRAWAL', 'DR']):
-            mapping['Debit'] = col
-        if any(k in col for k in ['CREDIT', 'DEPOSIT', 'CR']):
-            mapping['Credit'] = col
-            
-    # Rename columns to standard format for the Tally XML generator
-    if mapping:
-        df = df.rename(columns={v: k for k, v in mapping.items()})
+    if any(k in narr for k in ACCOUNTING_RULES["DUTIES_AND_TAXES"]):
+        return "GST/Taxes", 1
         
-    return df,
+    if any(k in narr for k in ACCOUNTING_RULES["CONTRA_CASH"]):
+        return "Cash", 1
         
+    return "Suspense A/c", 0
