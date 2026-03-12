@@ -58,7 +58,6 @@ async def history(request: Request):
 @app.get("/account")
 async def account(request: Request):
     return templates.TemplateResponse("account.html", {"request": request})
-    })
 
 @app.get("/pricing")
 async def pricing(request: Request):
@@ -117,5 +116,6 @@ if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 10000))
     uvicorn.run(app, host="0.0.0.0", port=port)
+
 
 
