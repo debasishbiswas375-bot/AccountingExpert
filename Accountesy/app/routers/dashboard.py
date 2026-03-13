@@ -1,31 +1,57 @@
 from fastapi import APIRouter, Request
-from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from app.database import supabase
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
 
-@router.get("/dashboard", response_class=HTMLResponse)
+@router.get("/dashboard")
 def dashboard(request: Request):
-    return templates.TemplateResponse("dashboard.html", {"request": request})
+
+    plans = supabase.table("plans").select("*").execute()
+
+    return templates.TemplateResponse(
+        "dashboard.html",
+        {
+            "request": request,
+            "plans": plans.data
+        }
+    )
 
 
-@router.get("/workspace", response_class=HTMLResponse)
+@router.get("/workspace")
 def workspace(request: Request):
     return templates.TemplateResponse("workspace.html", {"request": request})
 
 
-@router.get("/history", response_class=HTMLResponse)
+@router.get("/history")
 def history(request: Request):
-    return templates.TemplateResponse("history.html", {"request": request})
+    history = supabase.table("conversion_history").select("*").execute()
+
+    return templates.TemplateResponse(
+        "history.html",
+        {
+            "request": request,
+            "history": history.data
+        }
+    )
 
 
-@router.get("/pricing", response_class=HTMLResponse)
+@router.get("/pricing")
 def pricing(request: Request):
-    return templates.TemplateResponse("pricing.html", {"request": request})
+
+    plans = supabase.table("plans").select("*").execute()
+
+    return templates.TemplateResponse(
+        "pricing.html",
+        {
+            "request": request,
+            "plans": plans.data
+        }
+    )
 
 
-@router.get("/account", response_class=HTMLResponse)
+@router.get("/account")
 def account(request: Request):
     return templates.TemplateResponse("account.html", {"request": request})
