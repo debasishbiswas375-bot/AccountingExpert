@@ -2,7 +2,10 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from app.routers import auth, dashboard, admin, converter
+from app.routers import auth
+from app.routers import dashboard
+from app.routers import converter
+from app.routers import admin
 
 app = FastAPI()
 
