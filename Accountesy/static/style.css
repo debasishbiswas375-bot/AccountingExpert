@@ -1,94 +1,61 @@
 body{
 margin:0;
-font-family:Segoe UI;
-background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+font-family:Arial, sans-serif;
+background:linear-gradient(135deg,#0f2f36,#2f6f78);
 color:white;
+}
+
+.container{
+display:flex;
+min-height:100vh;
 }
 
 .sidebar{
-width:260px;
-height:100vh;
-position:fixed;
-background:rgba(255,255,255,0.05);
-padding:30px;
-backdrop-filter:blur(10px);
+width:220px;
+background:#102c33;
+padding:20px;
 }
 
-.logo img{
-width:60px;
+.logo{
+margin-bottom:30px;
 }
 
-.sidebar nav{
-margin-top:40px;
-}
-
-.sidebar nav a{
+.sidebar a{
 display:block;
-padding:12px;
+padding:10px;
 color:white;
 text-decoration:none;
-margin-bottom:10px;
-border-radius:8px;
+border-radius:6px;
+margin-bottom:5px;
 }
 
-.sidebar nav a:hover{
-background:rgba(255,255,255,0.15);
-}
-
-.sponsor{
-position:absolute;
-bottom:40px;
-}
-
-.sponsor img{
-width:120px;
+.sidebar a:hover{
+background:#1e6f78;
 }
 
 .main{
-margin-left:300px;
-padding:60px;
-}
-
-.cards{
-display:flex;
-gap:20px;
+flex:1;
+padding:40px;
 }
 
 .card{
 background:rgba(255,255,255,0.08);
-padding:30px;
-border-radius:15px;
-width:200px;
+padding:25px;
+border-radius:12px;
+margin-bottom:20px;
+backdrop-filter:blur(6px);
 }
 
-.upload-area{
-display:flex;
-gap:40px;
-}
-
-.upload-box{
-background:rgba(255,255,255,0.08);
-padding:40px;
-border-radius:15px;
-}
-
-button{
-background:#4cc9f0;
+.button{
+background:#58c4dd;
 border:none;
-padding:12px 25px;
+padding:10px 20px;
 border-radius:8px;
-color:white;
+color:black;
+font-weight:bold;
 cursor:pointer;
 }
 
-table{
-width:100%;
-background:white;
-color:black;
-border-collapse:collapse;
-}
-
-th,td{
-padding:10px;
-border:1px solid #ddd;
+.button:hover{
+background:#7bd8ec;
 }
