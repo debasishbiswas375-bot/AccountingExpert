@@ -1,6 +1,7 @@
 :root {
     --primary-blue: #4A90E2;
-    --glass-bg: rgba(255, 255, 255, 0.4); /* Slightly more solid for better contrast */
+    --nav-purple: #6b21a8;
+    --glass-bg: rgba(255, 255, 255, 0.4);
     --glass-blur: blur(15px);
 }
 
@@ -12,22 +13,18 @@ body {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    position: relative; /* Needed for the background overlay */
+    position: relative;
 }
 
-/* Background Layer with 50% Opacity */
+/* 50% Faded Background Pattern */
 body::before {
     content: "";
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('/static/assets/b.png');
-    background-repeat: repeat;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: url('/static/assets/b.png') repeat;
     background-size: 65px;
-    opacity: 0.5; /* 50% Blur/Transparency effect */
-    z-index: -1; /* Keep it behind everything */
+    opacity: 0.5;
+    z-index: -1;
 }
 
 .glass-panel {
@@ -37,23 +34,27 @@ body::before {
     border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
-/* Header & Sidebar code remains the same as before */
 .topbar {
-    width: 100%;
-    height: 70px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 40px;
-    box-sizing: border-box;
-    z-index: 1000;
+    width: 100%; height: 70px;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 40px; box-sizing: border-box;
 }
 
 .sidebar {
-    width: 260px;
-    margin: 20px;
-    padding: 20px;
-    border-radius: 20px;
-    display: flex;
-    flex-direction: column;
+    width: 260px; margin: 20px; padding: 25px;
+    border-radius: 25px; display: flex; flex-direction: column;
 }
+
+/* Nav Icons Styling from your Pic */
+.nav-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px; margin: 5px 0;
+    text-decoration: none; color: var(--nav-purple);
+    font-weight: 500; font-size: 1.1rem;
+}
+
+.nav-item i {
+    font-size: 1.4rem; /* Makes icons look like your screenshot */
+}
+
+.nav-item:hover { text-decoration: underline; }
