@@ -2,25 +2,28 @@
     --primary-blue: #3b82f6; 
     --nav-text: #334155;
     
-    /* The Iridescent Soap Bubble Effect */
-    --bubble-bg: linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.2) 100%), 
+    /* THE SOAP BUBBLE SHINE */
+    --bubble-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.3) 100%), 
                  linear-gradient(225deg, rgba(255, 192, 203, 0.15) 0%, rgba(173, 216, 230, 0.2) 50%, rgba(144, 238, 144, 0.15) 100%);
-    --glass-blur: blur(20px); 
+    --glass-blur: blur(25px); 
     
-    /* Lighter, subtle horizontal stripes */
+    /* STRIPED BACKGROUND + REPEATING "B" LOGO WATERMARK */
     --bg-stripes: repeating-linear-gradient(
         to bottom,
-        #f8fafc,          
-        #f8fafc 80px,     
-        #f1f5f9 80px,     
-        #f1f5f9 160px     
+        #f1f7ff,          
+        #f1f7ff 80px,     
+        #ffffff 80px,     
+        #ffffff 160px     
     );
 }
 
 body {
     margin: 0; padding: 0;
     font-family: 'Inter', sans-serif;
-    background: var(--bg-stripes);
+    /* Layer 1: The B Logo Pattern (Grayscale) | Layer 2: The Stripes */
+    background: url('/static/assets/b.png') repeat, var(--bg-stripes);
+    background-size: 100px, auto; /* Adjust 100px to change watermark size */
+    background-blend-mode: luminosity; /* Forces the B logo to look grayscale */
     height: 100vh; display: flex;
     flex-direction: column; overflow: hidden;
 }
@@ -29,80 +32,22 @@ body {
     background: var(--bubble-bg);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05), inset 0 0 20px rgba(255, 255, 255, 0.6); 
+    border: 1.5px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 10px 40px rgba(31, 38, 135, 0.04), 
+                inset 0 0 15px rgba(255, 255, 255, 0.8);
 }
 
-.topbar {
-    width: 100%; height: 70px;
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 0 30px; box-sizing: border-box;
-    z-index: 10;
+/* STICKY FOOTER */
+.site-footer {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    font-size: 0.8rem;
+    color: #64748b;
+    z-index: 5;
+    width: auto;
+    padding: 10px 30px;
+    border-radius: 50px;
 }
-
-/* SIDEBAR EXPAND / COLLAPSE ANIMATIONS */
-.sidebar {
-    width: 250px; margin: 15px; padding: 20px;
-    border-radius: 30px; display: flex; flex-direction: column;
-    height: calc(100vh - 120px);
-    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: hidden;
-    position: relative;
-}
-
-.sidebar.collapsed {
-    width: 80px; /* Mini width */
-    padding: 20px 10px;
-}
-
-.toggle-btn {
-    background: transparent; border: none; cursor: pointer;
-    color: var(--nav-text); padding: 5px; margin-bottom: 20px;
-    display: flex; align-items: center; justify-content: flex-end;
-    transition: 0.3s; width: 100%;
-}
-
-.sidebar.collapsed .toggle-btn {
-    justify-content: center;
-}
-
-.nav-item {
-    display: flex; align-items: center; gap: 15px;
-    padding: 12px 20px; margin: 5px 0;
-    text-decoration: none; color: var(--nav-text);
-    font-weight: 600; font-size: 0.95rem;
-    border-radius: 25px; transition: 0.3s;
-    white-space: nowrap;
-}
-
-/* Center icons when collapsed */
-.sidebar.collapsed .nav-item {
-    justify-content: center;
-    padding: 12px;
-}
-
-.nav-text {
-    opacity: 1; transition: opacity 0.2s;
-}
-
-/* Hide text and sponsor when collapsed */
-.sidebar.collapsed .nav-text {
-    opacity: 0; display: none;
-}
-.sidebar.collapsed .sponsor-section {
-    opacity: 0; display: none;
-}
-
-.nav-item.active {
-    background: var(--primary-blue);
-    color: white;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-.nav-icon {
-    width: 20px; height: 20px; stroke: currentColor; 
-    stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round;
-    flex-shrink: 0;
-}
-
-.nav-item:hover:not(.active) { background: rgba(255, 255, 255, 0.7); }
