@@ -10,31 +10,24 @@
 body {
   height: 100vh;
   background: linear-gradient(135deg, #5fa8ff, #0b1f4d);
-  background-attachment: fixed;
   color: #fff;
+  overflow: hidden;
   position: relative;
-  overflow-x: hidden;
 }
 
 /* WATERMARK */
 body::before {
   content: "";
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-
-  background-image: url('/static/assets/b.png');
-  background-repeat: repeat;
+  inset: 0;
+  background: url('/static/assets/b.png') repeat;
   background-size: 120px;
-
-  opacity: 0.06;
+  opacity: 0.05;
   pointer-events: none;
   z-index: 0;
 }
 
-/* APP WRAPPER */
+/* APP */
 .app-wrapper {
   display: flex;
   flex-direction: column;
@@ -45,122 +38,179 @@ body::before {
 
 /* HEADER */
 header {
-  height: 70px;
-  padding: 0 25px;
+  height: 65px;
+  margin: 15px 20px 0;
+  padding: 0 20px;
 
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  border-radius: 20px;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(25px);
+
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  z-index: 5;
 }
 
-/* HEADER RIGHT */
+/* HEADER ACTIONS */
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
 }
 
+/* ICON */
 .icon-button {
-  cursor: pointer;
-}
-
-.avatar-bubble {
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: #4facfe;
+  background: rgba(255,255,255,0.15);
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  font-weight: 600;
+  cursor: pointer;
+  position: relative;
 }
 
-/* MAIN LAYOUT */
+.icon-button::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 7px;
+  height: 7px;
+  background: red;
+  border-radius: 50%;
+}
+
+/* AVATAR */
+.avatar-bubble {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* MAIN */
 .main-layout {
   display: flex;
   flex: 1;
+  margin-top: 10px;
 }
 
 /* SIDEBAR */
 .sidebar {
   width: 220px;
-  margin: 20px;
+  margin: 15px 0 15px 20px;
   padding: 20px;
   border-radius: 25px;
 
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255,255,255,0.12);
   backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
 
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.25);
 
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
-  height: calc(100vh - 90px);
-  position: relative;
 }
 
-/* NAV ITEMS */
+/* NAV */
 .nav-item {
   display: flex;
   align-items: center;
   gap: 12px;
-
   padding: 12px 15px;
   border-radius: 14px;
 
   color: #e2e8f0;
   text-decoration: none;
-  font-size: 14px;
-
   transition: 0.3s;
 }
 
 .nav-item:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255,255,255,0.15);
 }
 
 .nav-item.active {
   background: linear-gradient(135deg, #4facfe, #00f2fe);
-  color: #fff;
 }
 
-/* ICON FIX */
-.liquid-icon {
-  width: 20px;
-  height: 20px;
-  fill: white;
-  opacity: 0.9;
-}
-
-/* MAIN CONTENT */
+/* CONTENT */
 .main-content {
   flex: 1;
   padding: 30px;
   overflow-y: auto;
 }
 
+/* DROPDOWN */
+.dropdown {
+  position: absolute;
+  top: 55px;
+  right: 0;
+
+  min-width: 180px;
+  padding: 10px;
+
+  border-radius: 15px;
+
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(25px);
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+
+  display: none;
+  z-index: 50;
+}
+
+.dropdown.show {
+  display: block;
+}
+
+.dropdown-item {
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background: rgba(255,255,255,0.2);
+}
+
 /* FOOTER */
 footer {
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
 
-  background: rgba(255, 255, 255, 0.08);
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 5px 20px;
+  border-radius: 20px;
+
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(20px);
+
+  font-size: 0.7rem;
+  z-index: 10;
 }
 
 /* MOBILE */
 @media (max-width: 768px) {
   .sidebar {
     position: absolute;
-    top: 70px;
     left: 10px;
+    top: 80px;
     width: 75%;
     z-index: 1000;
   }
