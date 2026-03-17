@@ -4,19 +4,14 @@
     <meta charset="UTF-8">
     <title>Accountesy</title>
 
-    <!-- Favicon -->
     <link rel="icon" href="/static/assets/logo.png">
-
-    <!-- CSS -->
     <link rel="stylesheet" href="/static/css/main.css">
-
-    <!-- Icons -->
     <script src="https://unpkg.com/feather-icons"></script>
 </head>
 
 <body>
 
-<!-- ================= HEADER ================= -->
+<!-- HEADER -->
 <header class="header">
 
     <div class="header-left">
@@ -24,7 +19,6 @@
 
         <img src="/static/assets/logo.png" class="logo">
 
-        <!-- BRAND + TAGLINE -->
         <div class="brand-box">
             <span class="brand">Accountesy</span>
             <span class="tagline">
@@ -34,35 +28,53 @@
 
         <!-- SAFE BADGE -->
         <span class="badge 
-            {% if user and user.plans and user.plans.name %}
-                {{ user.plans.name | lower }}
-            {% else %}
-                guest
-            {% endif %}
+        {% if user and user.plans and user.plans.name %}
+            {{ user.plans.name | lower }}
+        {% else %}
+            guest
+        {% endif %}
         ">
-            {% if user and user.plans and user.plans.name %}
-                {{ user.plans.name }}
-            {% else %}
-                GUEST
-            {% endif %}
+        {% if user and user.plans and user.plans.name %}
+            {{ user.plans.name }}
+        {% else %}
+            GUEST
+        {% endif %}
         </span>
     </div>
 
     <div class="header-right">
 
-        <!-- Notification -->
-        <div class="icon-bell">
+        <!-- NOTIFICATION -->
+        <div class="icon-bell" id="bellBtn">
             <i data-feather="bell"></i>
-            <span class="dot"></span>
+
+            {% if notifications and notifications|length > 0 %}
+                <span class="dot"></span>
+            {% endif %}
+
+            <div class="dropdown" id="bellMenu">
+                {% if notifications and notifications|length > 0 %}
+                    {% for note in notifications %}
+                        <p>{{ note }}</p>
+                    {% endfor %}
+                {% else %}
+                    <p>No notifications</p>
+                {% endif %}
+            </div>
         </div>
 
-        <!-- Avatar -->
-        <div class="avatar">
+        <!-- AVATAR -->
+        <div class="avatar" id="avatarBtn">
             {% if user and user.username %}
-                {{ user.username[0] | upper }}
+                {{ user.username[0]|upper }}
             {% else %}
                 G
             {% endif %}
+
+            <div class="dropdown" id="avatarMenu">
+                <p>Profile</p>
+                <p>Logout</p>
+            </div>
         </div>
 
     </div>
@@ -70,11 +82,10 @@
 </header>
 
 
-<!-- ================= SIDEBAR ================= -->
-<aside id="sidebar" class="sidebar expanded">
+<!-- SIDEBAR -->
+<aside id="sidebar" class="sidebar">
 
     <nav>
-
         <a href="/dashboard" class="nav-item active">
             <i data-feather="grid"></i>
             <span>Dashboard</span>
@@ -89,24 +100,25 @@
             <i data-feather="clock"></i>
             <span>History</span>
         </a>
-
     </nav>
 
+    <!-- SPONSOR -->
     <div class="sidebar-footer">
         <img src="/static/assets/logo1.png">
-        <span>Powered by Uday Mondal</span>
+        <span>Sponsored by</span>
+        <span class="sponsor-name">Uday Mondal</span>
     </div>
 
 </aside>
 
 
-<!-- ================= MAIN ================= -->
+<!-- MAIN -->
 <main class="main">
     {% block content %}{% endblock %}
 </main>
 
 
-<!-- ================= FOOTER ================= -->
+<!-- FOOTER -->
 <footer class="footer">
     <div class="footer-bubble">
         Created by <b>Debasish Biswas</b> © 2026
@@ -114,15 +126,19 @@
 </footer>
 
 
-<!-- ================= JS ================= -->
 <script>
     feather.replace();
 
-    const sidebar = document.getElementById("sidebar");
-    const toggle = document.getElementById("menuToggle");
+    document.getElementById("menuToggle").onclick = () => {
+        document.getElementById("sidebar").classList.toggle("collapsed");
+    };
 
-    toggle.onclick = () => {
-        sidebar.classList.toggle("collapsed");
+    document.getElementById("avatarBtn").onclick = () => {
+        document.getElementById("avatarMenu").classList.toggle("show");
+    };
+
+    document.getElementById("bellBtn").onclick = () => {
+        document.getElementById("bellMenu").classList.toggle("show");
     };
 </script>
 
