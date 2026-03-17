@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto;">
+    <div style="margin-bottom: 30px;">
+        <h1 style="font-size: 2.5rem; font-weight: 800; color: #1e293b; margin-bottom: 5px;">Workspace</h1>
+        <p style="color: #64748b; font-size: 1.1rem;">Upload your bank statements for Pro-tier processing.</p>
+    </div>
+
+    <div class="glass-panel" style="padding: 50px; border-radius: 30px; text-align: center;">
+        <form action="/workspace/convert" method="POST" enctype="multipart/form-data">
+            <div id="drop-zone" style="border: 2px dashed #93c5fd; border-radius: 25px; padding: 80px 20px; background: rgba(255, 255, 255, 0.4); cursor: pointer; transition: 0.3s;">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 20px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                <h3 style="color: #1e293b; font-size: 1.4rem; margin-bottom: 10px;">Drop Excel or CSV here</h3>
+                <p style="color: #64748b; margin-bottom: 30px;">Pro Plan: Unlimited file size supported</p>
+                <input type="file" name="file" id="fileInput" style="display: none;" accept=".xlsx, .xls, .csv">
+                <button type="button" onclick="document.getElementById('fileInput').click()" style="background: white; color: var(--primary-blue); border: 1px solid var(--primary-blue); padding: 12px 35px; border-radius: 25px; font-weight: 700; cursor: pointer;">Browse Files</button>
+            </div>
+            <div id="submit-section" style="margin-top: 40px; display: none;">
+                <div style="background: white; padding: 15px 25px; border-radius: 15px; border: 1px solid #e2e8f0; display: inline-block; margin-bottom: 20px;">
+                    <span id="file-name" style="font-weight: 600; color: #334155;"></span>
+                </div><br>
+                <button type="submit" style="background: var(--primary-blue); color: white; border: none; padding: 15px 50px; border-radius: 30px; font-size: 1.1rem; font-weight: 700; cursor: pointer; box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);">Start Pro Conversion</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    const fileInput = document.getElementById('fileInput');
+    const dropZone = document.getElementById('drop-zone');
+    fileInput.addEventListener('change', function() {
+        if (this.files[0]) {
+            document.getElementById('file-name').textContent = this.files[0].name;
+            document.getElementById('submit-section').style.display = 'block';
+            dropZone.style.borderColor = '#10b981';
+        }
+    });
+</script>
+{% endblock %}
