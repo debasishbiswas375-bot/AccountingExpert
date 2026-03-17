@@ -16,25 +16,31 @@
 <header>
   <div style="display:flex;align-items:center;">
     <img src="/static/assets/logo.png" style="height:34px;margin-right:10px;">
-    <h1 style="font-size:1rem;">Accountesy</h1>
+    <h1>Accountesy</h1>
     <span style="margin-left:8px;background:#4facfe;padding:2px 8px;border-radius:12px;font-size:0.65rem;">PRO</span>
   </div>
 
   <div class="header-actions">
-    <div class="icon-button" onclick="toggleNotif()">🔔</div>
-    <div class="avatar-bubble" onclick="toggleMenu()">D</div>
+
+    <!-- NOTIFICATION -->
+    <div style="position:relative;">
+      <div class="icon-button" onclick="toggleNotif()">🔔</div>
+      <div id="notifDropdown" class="dropdown">
+        <div class="dropdown-item">🔔 No notifications</div>
+      </div>
+    </div>
+
+    <!-- AVATAR -->
+    <div style="position:relative;">
+      <div class="avatar-bubble" onclick="toggleMenu()">D</div>
+      <div id="avatarMenu" class="dropdown">
+        <div class="dropdown-item">👤 Profile</div>
+        <div class="dropdown-item">🚪 Logout</div>
+      </div>
+    </div>
+
   </div>
 </header>
-
-<!-- DROPDOWNS -->
-<div id="notifDropdown" class="dropdown">
-  <div class="dropdown-item">No notifications</div>
-</div>
-
-<div id="avatarMenu" class="dropdown" style="right:80px;">
-  <div class="dropdown-item">Profile</div>
-  <div class="dropdown-item">Logout</div>
-</div>
 
 <!-- MAIN -->
 <div class="main-layout">
@@ -69,11 +75,20 @@
 <script>
 function toggleNotif() {
   document.getElementById("notifDropdown").classList.toggle("show");
+  document.getElementById("avatarMenu").classList.remove("show");
 }
 
 function toggleMenu() {
   document.getElementById("avatarMenu").classList.toggle("show");
+  document.getElementById("notifDropdown").classList.remove("show");
 }
+
+document.addEventListener("click", function(e) {
+  if (!e.target.closest(".header-actions")) {
+    document.getElementById("notifDropdown").classList.remove("show");
+    document.getElementById("avatarMenu").classList.remove("show");
+  }
+});
 </script>
 
 </body>
