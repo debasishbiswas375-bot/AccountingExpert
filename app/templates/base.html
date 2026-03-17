@@ -23,35 +23,65 @@
     </header>
 
     <div style="display: flex; flex: 1; overflow: hidden;">
-        <nav class="sidebar glass-panel">
+        
+        <nav class="sidebar glass-panel" id="mainSidebar">
+            
+            <button class="toggle-btn" onclick="toggleSidebar()" title="Toggle Sidebar">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+
             <div class="nav-links">
                 <a href="/" class="nav-item {% if request.url.path == '/' %}active{% endif %}">
                     <svg class="nav-icon" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"></rect><rect width="7" height="5" x="14" y="3" rx="1"></rect><rect width="7" height="9" x="14" y="12" rx="1"></rect><rect width="7" height="5" x="3" y="16" rx="1"></rect></svg>
-                    Dashboard
+                    <span class="nav-text">Dashboard</span>
                 </a>
                 
                 <a href="/workspace" class="nav-item {% if request.url.path == '/workspace' %}active{% endif %}">
                     <svg class="nav-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                    Workspace
+                    <span class="nav-text">Workspace</span>
                 </a>
 
                 <a href="/history" class="nav-item {% if request.url.path == '/history' %}active{% endif %}">
                     <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                    History
+                    <span class="nav-text">History</span>
                 </a>
             </div>
 
-            <div style="margin-top: auto; text-align: center; padding-top: 20px;">
+            <div class="sponsor-section" style="margin-top: auto; text-align: center; padding-top: 20px;">
                 <p style="font-size: 0.7rem; opacity: 0.6; margin: 0;">Sponsored by</p>
                 <img src="/static/assets/logo1.png" style="width: 55px; margin: 8px 0;" alt="Sponsor">
                 <p style="font-weight: bold; font-size: 0.8rem; margin: 0;">Uday Mondal | Tax Consultant</p>
             </div>
         </nav>
 
-        <main style="flex: 1; padding: 40px; overflow-y: auto;">
+        <main style="flex: 1; padding: 40px; overflow-y: auto; transition: 0.4s;">
             {% block content %}{% endblock %}
         </main>
     </div>
 
+    <script>
+        const sidebar = document.getElementById('mainSidebar');
+        
+        // 1. Check local storage so the browser remembers your preference across pages
+        if (localStorage.getItem('sidebarState') === 'collapsed') {
+            sidebar.classList.add('collapsed');
+        }
+
+        // 2. The function that fires when you click the menu icon
+        function toggleSidebar() {
+            sidebar.classList.toggle('collapsed');
+            
+            // Save preference to local storage
+            if (sidebar.classList.contains('collapsed')) {
+                localStorage.setItem('sidebarState', 'collapsed');
+            } else {
+                localStorage.setItem('sidebarState', 'expanded');
+            }
+        }
+    </script>
 </body>
 </html>
