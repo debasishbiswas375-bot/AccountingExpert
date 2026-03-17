@@ -26,6 +26,7 @@ body::before {
 /* HEADER */
 .header {
     position: fixed;
+    top: 0;
     width: 100%;
     height: 64px;
 
@@ -37,6 +38,9 @@ body::before {
 
     backdrop-filter: blur(18px);
     background: rgba(255,255,255,0.15);
+
+    overflow: hidden;
+    z-index: 1000;
 }
 
 .header-left {
@@ -109,14 +113,6 @@ body::before {
     margin-left: 10px;
 }
 
-.username {
-    font-weight: 600;
-}
-
-.dot-sep {
-    opacity: 0.6;
-}
-
 /* RIGHT */
 .header-right {
     display: flex;
@@ -171,17 +167,19 @@ body::before {
 /* SIDEBAR */
 .sidebar {
     position: fixed;
-    top: 90px;
+    top: 64px; /* FIXED */
     left: 20px;
 
     width: 240px;
-    height: calc(100% - 110px);
+    height: calc(100% - 80px); /* FIXED */
 
     backdrop-filter: blur(18px);
     background: rgba(255,255,255,0.18);
 
     border-radius: 20px;
     padding: 30px 20px;
+
+    transition: all 0.3s ease;
 }
 
 .sidebar.collapsed {
@@ -225,9 +223,6 @@ body::before {
     bottom: 20px;
     width: 100%;
     text-align: center;
-    left: 0;
-    right: 0;
-    margin: auto;
 }
 
 .sidebar-footer img {
@@ -245,7 +240,7 @@ body::before {
 /* MAIN */
 .main {
     margin-left: 270px;
-    margin-top: 100px;
+    margin-top: 80px; /* FIXED */
     padding: 20px;
 }
 
@@ -264,5 +259,5 @@ body::before {
     border-radius: 10px;
 
     background: rgba(255,255,255,0.5);
-    color: black;
+    color: white;
 }
