@@ -3,85 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accountesy | Enterprise</title>
+    <title>Accountesy | Enterprise Pro</title>
     <link rel="stylesheet" href="/static/css/main.css">
 </head>
 <body>
 
-    <header class="topbar glass-panel">
+    <header class="glass-panel" style="height: 70px; display: flex; align-items: center; padding: 0 30px; margin: 10px; border-radius: 25px; justify-content: space-between;">
         <div style="display: flex; align-items: center; gap: 15px;">
-            <img src="/static/assets/logo.png" style="width: 32px;" alt="Logo">
-            <div style="display: flex; flex-direction: column;">
-                <h2 style="margin: 0; font-size: 1.1rem; color: #1e40af;">Accountesy</h2>
-                <small style="font-size: 0.65rem; opacity: 0.6;">Welcome to Accounting Expert Enterprise UI</small>
-            </div>
+            <img src="/static/assets/logo.png" style="width: 35px;">
+            <h2 style="margin: 0; color: #1e40af; font-size: 1.2rem;">Accountesy</h2>
         </div>
-        <div style="display: flex; align-items: center; gap: 20px;">
-            <div style="background: var(--primary-blue); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem;">Free Plan</div>
-            <div style="background: var(--primary-blue); color: white; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-weight: bold;">D</div>
-        </div>
+        <div style="background: var(--primary-blue); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold;">Pro Plan</div>
     </header>
 
     <div style="display: flex; flex: 1; overflow: hidden;">
-        
         <nav class="sidebar glass-panel" id="mainSidebar">
-            
-            <button class="toggle-btn" onclick="toggleSidebar()" title="Toggle Sidebar">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
+            <button onclick="toggleSidebar()" style="background:none; border:none; cursor:pointer; margin-bottom:20px; color:var(--nav-text);">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </button>
 
             <div class="nav-links">
                 <a href="/" class="nav-item {% if request.url.path == '/' %}active{% endif %}">
-                    <svg class="nav-icon" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"></rect><rect width="7" height="5" x="14" y="3" rx="1"></rect><rect width="7" height="9" x="14" y="12" rx="1"></rect><rect width="7" height="5" x="3" y="16" rx="1"></rect></svg>
-                    <span class="nav-text">Dashboard</span>
+                    <span>🏠</span> <span class="nav-text">Dashboard</span>
                 </a>
-                
                 <a href="/workspace" class="nav-item {% if request.url.path == '/workspace' %}active{% endif %}">
-                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                    <span class="nav-text">Workspace</span>
+                    <span>🚀</span> <span class="nav-text">Workspace</span>
                 </a>
-
                 <a href="/history" class="nav-item {% if request.url.path == '/history' %}active{% endif %}">
-                    <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                    <span class="nav-text">History</span>
+                    <span>🕒</span> <span class="nav-text">History</span>
                 </a>
             </div>
 
-            <div class="sponsor-section" style="margin-top: auto; text-align: center; padding-top: 20px;">
-                <p style="font-size: 0.7rem; opacity: 0.6; margin: 0;">Sponsored by</p>
-                <img src="/static/assets/logo1.png" style="width: 55px; margin: 8px 0;" alt="Sponsor">
-                <p style="font-weight: bold; font-size: 0.8rem; margin: 0;">Uday Mondal | Tax Consultant</p>
+            <div class="sponsor-section" style="margin-top: auto; text-align: center;">
+                <p style="font-size: 0.6rem; opacity: 0.6; margin:0;">Sponsored by</p>
+                <img src="/static/assets/logo1.png" style="width: 50px; margin: 5px 0;">
+                <p style="font-weight: bold; font-size: 0.75rem; margin:0;">Uday Mondal</p>
             </div>
         </nav>
 
-        <main style="flex: 1; padding: 40px; overflow-y: auto; transition: 0.4s;">
+        <main style="flex: 1; padding: 40px; overflow-y: auto;">
             {% block content %}{% endblock %}
         </main>
     </div>
 
-    <script>
-        const sidebar = document.getElementById('mainSidebar');
-        
-        // 1. Check local storage so the browser remembers your preference across pages
-        if (localStorage.getItem('sidebarState') === 'collapsed') {
-            sidebar.classList.add('collapsed');
-        }
+    <footer class="site-footer glass-panel">
+        <span style="font-size: 0.85rem; color: #475569;">
+            Created by <b>Debasish Biswas</b> | © 2026 All Rights Reserved
+        </span>
+    </footer>
 
-        // 2. The function that fires when you click the menu icon
+    <script>
         function toggleSidebar() {
-            sidebar.classList.toggle('collapsed');
-            
-            // Save preference to local storage
-            if (sidebar.classList.contains('collapsed')) {
-                localStorage.setItem('sidebarState', 'collapsed');
-            } else {
-                localStorage.setItem('sidebarState', 'expanded');
-            }
+            const sb = document.getElementById('mainSidebar');
+            sb.classList.toggle('collapsed');
+            localStorage.setItem('sbState', sb.classList.contains('collapsed') ? 'mini' : 'full');
         }
+        if(localStorage.getItem('sbState') === 'mini') document.getElementById('mainSidebar').classList.add('collapsed');
     </script>
 </body>
 </html>
