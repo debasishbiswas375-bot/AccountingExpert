@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><title>Admin Gate | Accountesy</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body style="justify-content: center; align-items: center; background: #0f172a;">
+    <div class="glass-panel" style="padding: 50px; border-radius: 30px; width: 400px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
+        <h2 style="color: white; margin-bottom: 10px;">Security Layer 2</h2>
+        <p style="color: #94a3b8; margin-bottom: 30px;">System Administrator Access Only</p>
+        <form action="/admin/login" method="POST">
+            <input type="text" name="username" placeholder="Admin ID" required style="width: 100%; padding: 15px; margin-bottom: 20px; border-radius: 15px; border: none; background: rgba(255,255,255,0.05); color: white;">
+            <input type="password" name="password" placeholder="Passcode" required style="width: 100%; padding: 15px; margin-bottom: 30px; border-radius: 15px; border: none; background: rgba(255,255,255,0.05); color: white;">
+            <button type="submit" style="width: 100%; padding: 15px; border-radius: 15px; border: none; background: var(--primary-blue); color: white; font-weight: 800; cursor: pointer;">Verify Identity</button>
+        </form>
+    </div>
+</body>
+</html>
