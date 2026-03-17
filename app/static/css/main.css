@@ -1,15 +1,19 @@
 :root {
     --primary-blue: #3b82f6; 
     --nav-text: #334155;
-    --glass-bg: rgba(255, 255, 255, 0.45);
-    --glass-blur: blur(24px); 
     
+    /* The Iridescent Soap Bubble Effect */
+    --bubble-bg: linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.2) 100%), 
+                 linear-gradient(225deg, rgba(255, 192, 203, 0.15) 0%, rgba(173, 216, 230, 0.2) 50%, rgba(144, 238, 144, 0.15) 100%);
+    --glass-blur: blur(20px); 
+    
+    /* Much lighter, subtle horizontal stripes */
     --bg-stripes: repeating-linear-gradient(
         to bottom,
-        #dbeafe,          
-        #dbeafe 80px,     
-        #bfdbfe 80px,     
-        #bfdbfe 160px     
+        #f8fafc,          
+        #f8fafc 80px,     
+        #f1f5f9 80px,     
+        #f1f5f9 160px     
     );
 }
 
@@ -22,11 +26,12 @@ body {
 }
 
 .glass-panel {
-    background: var(--glass-bg);
+    background: var(--bubble-bg);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); 
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    /* Inset shadow creates the "bubble" edge reflection */
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05), inset 0 0 20px rgba(255, 255, 255, 0.6); 
 }
 
 .topbar {
@@ -61,4 +66,4 @@ body {
     stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round;
 }
 
-.nav-item:hover:not(.active) { background: rgba(255, 255, 255, 0.5); }
+.nav-item:hover:not(.active) { background: rgba(255, 255, 255, 0.7); }
