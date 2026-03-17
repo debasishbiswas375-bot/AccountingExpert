@@ -6,7 +6,6 @@
 
     <link rel="icon" href="/static/assets/logo.png">
     <link rel="stylesheet" href="/static/css/main.css">
-
     <script src="https://unpkg.com/feather-icons"></script>
 </head>
 
@@ -34,20 +33,26 @@
             </div>
         </div>
 
-        <!-- BADGE -->
-        <span class="badge 
-        {% if user and user.plans and user.plans.name %}
-            {{ user.plans.name | lower }}
-        {% else %}
-            guest
-        {% endif %}
-        ">
-        {% if user and user.plans and user.plans.name %}
-            {{ user.plans.name }}
-        {% else %}
-            GUEST
-        {% endif %}
-        </span>
+        <!-- USER + PLAN -->
+        <div class="user-plan">
+            <span class="username">
+                {% if user and user.username %}
+                    {{ user.username }}
+                {% else %}
+                    Guest
+                {% endif %}
+            </span>
+
+            <span class="dot-sep">•</span>
+
+            <span class="plan">
+                {% if user and user.plans and user.plans.name %}
+                    {{ user.plans.name }}
+                {% else %}
+                    Free
+                {% endif %}
+            </span>
+        </div>
 
     </div>
 
