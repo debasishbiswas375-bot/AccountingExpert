@@ -46,30 +46,42 @@ body::before {
 .header-left {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
 .logo {
-    width: 35px;
+    height: 40px;   /* main control */
+    width: auto;    /* keep aspect ratio */
+    object-fit: contain;
 }
 
 /* BRAND */
 .brand-box {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     line-height: 1.1;
 }
-
 .brand {
-    font-weight: bold;
     font-size: 18px;
+    font-weight: 700;
+
+    background: linear-gradient(135deg, #ffffff, #7dd3fc, #38bdf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    letter-spacing: 0.4px;
+}
+.brand {
+    text-shadow: 0 0 8px rgba(255,255,255,0.2);
 }
 
 /* TAGLINE */
 .tagline {
-    font-size: 12px;
-    opacity: 0.7;
-    margin-top: 5px;
+    font-size: 10px;
+    opacity: 0.75;
+    margin-top: 2px;
+    color: rgba(255,255,255,0.8);
 }
 
 /* MENU */
@@ -180,12 +192,15 @@ body::before {
 /* SIDEBAR FOOTER */
 .sidebar-footer {
     position: absolute;
-    bottom: 15px;
+    bottom: 20px;
     text-align: center;
+    font-size: 12px;
+    opacity: 0.7;
 }
 
 .sidebar-footer img {
-    width: 35px;
+    width: 24px;
+    margin-bottom: 5px;
 }
 
 /* ================= MAIN ================= */
@@ -198,16 +213,18 @@ body::before {
 /* ================= FOOTER ================= */
 .footer {
     position: fixed;
-    bottom: 10px;
+    bottom: 8px;
     width: 100%;
     display: flex;
     justify-content: center;
 }
 
 .footer-bubble {
-    padding: 8px 20px;
-    border-radius: 20px;
+    padding: 4px 14px;
+    border-radius: 10px;
 
-    backdrop-filter: blur(10px);
-    background: rgba(255,255,255,0.2);
+    font-size: 12px;
+
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(6px);
 }
