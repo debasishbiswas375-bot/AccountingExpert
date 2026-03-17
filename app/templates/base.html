@@ -10,7 +10,7 @@
     <!-- CSS -->
     <link rel="stylesheet" href="/static/css/main.css">
 
-    <!-- Icons (Heroicons CDN) -->
+    <!-- Icons -->
     <script src="https://unpkg.com/feather-icons"></script>
 </head>
 
@@ -18,19 +18,38 @@
 
 <!-- ================= HEADER ================= -->
 <header class="header">
+
     <div class="header-left">
         <button id="menuToggle" class="menu-btn">☰</button>
 
         <img src="/static/assets/logo.png" class="logo">
-        <span class="brand">Accountesy</span>
 
-        <!-- PLAN BADGE -->
-        <span class="badge {{ user.plans.name | lower }}">
-            {{ user.plans.name }}
+        <!-- BRAND + TAGLINE -->
+        <div class="brand-box">
+            <span class="brand">Accountesy</span>
+            <span class="tagline">
+                Learn Smart, Grow Fast, Be Accounting Expert with Accountesy
+            </span>
+        </div>
+
+        <!-- SAFE BADGE -->
+        <span class="badge 
+            {% if user and user.plans and user.plans.name %}
+                {{ user.plans.name | lower }}
+            {% else %}
+                guest
+            {% endif %}
+        ">
+            {% if user and user.plans and user.plans.name %}
+                {{ user.plans.name }}
+            {% else %}
+                GUEST
+            {% endif %}
         </span>
     </div>
 
     <div class="header-right">
+
         <!-- Notification -->
         <div class="icon-bell">
             <i data-feather="bell"></i>
@@ -39,9 +58,15 @@
 
         <!-- Avatar -->
         <div class="avatar">
-            {{ user.username[0]|upper if user.username else "D" }}
+            {% if user and user.username %}
+                {{ user.username[0] | upper }}
+            {% else %}
+                G
+            {% endif %}
         </div>
+
     </div>
+
 </header>
 
 
@@ -49,6 +74,7 @@
 <aside id="sidebar" class="sidebar expanded">
 
     <nav>
+
         <a href="/dashboard" class="nav-item active">
             <i data-feather="grid"></i>
             <span>Dashboard</span>
@@ -63,12 +89,14 @@
             <i data-feather="clock"></i>
             <span>History</span>
         </a>
+
     </nav>
 
     <div class="sidebar-footer">
         <img src="/static/assets/logo1.png">
-        <span>Sponsored by Uday Mondal | Tax Consultant Advocate</span>
+        <span>Powered by Uday Mondal</span>
     </div>
+
 </aside>
 
 
