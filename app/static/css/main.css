@@ -16,18 +16,21 @@ body {
     top: 0;
     width: 100%;
     height: 64px;
+
     display: flex;
     justify-content: space-between;
     align-items: center;
+
     padding: 0 16px;
-    backdrop-filter: blur(18px);
-    background: rgba(255,255,255,0.15);
+
+    backdrop-filter: blur(20px);
+    background: rgba(255,255,255,0.2);
 }
 
 .header-left {
     display: flex;
-    gap: 12px;
     align-items: center;
+    gap: 12px;
 }
 
 .logo {
@@ -43,11 +46,25 @@ body {
 
 /* TOGGLE */
 .menu-toggle {
-    background: rgba(255,255,255,0.2);
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
     border: none;
-    padding: 8px 12px;
-    border-radius: 10px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    align-items: center;
+
+    background: rgba(255,255,255,0.4);
     cursor: pointer;
+}
+
+.menu-toggle span {
+    width: 18px;
+    height: 2px;
+    background: black;
 }
 
 /* SIDEBAR */
@@ -55,12 +72,16 @@ body {
     position: fixed;
     top: 64px;
     left: 20px;
+
     width: 240px;
     height: calc(100% - 64px);
+
     padding: 25px;
     border-radius: 20px;
-    background: rgba(255,255,255,0.2);
-    backdrop-filter: blur(20px);
+
+    background: linear-gradient(160deg, rgba(255,255,255,0.4), rgba(255,255,255,0.1));
+    backdrop-filter: blur(25px);
+
     transition: 0.3s;
 }
 
@@ -69,44 +90,47 @@ body {
     width: 80px;
 }
 
-/* HIDE TEXT */
-.sidebar.collapsed .nav-item span {
-    display: none;
-}
-
 /* NAV */
 .nav-item {
     display: flex;
     gap: 12px;
     padding: 12px;
-    border-radius: 10px;
+    border-radius: 12px;
     color: white;
     text-decoration: none;
-    position: relative;
+    align-items: center;
 }
 
 .nav-item.active {
     background: linear-gradient(135deg, #00c6ff, #0072ff);
 }
 
-/* TOOLTIP */
-.sidebar.collapsed .nav-item::after {
-    content: attr(data-label);
-    position: absolute;
-    left: 70px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: black;
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-size: 12px;
-    opacity: 0;
-    pointer-events: none;
-    white-space: nowrap;
+/* HIDE TEXT */
+.sidebar.collapsed .nav-item span {
+    display: none;
 }
 
-.sidebar.collapsed .nav-item:hover::after {
-    opacity: 1;
+/* CENTER ICONS */
+.sidebar.collapsed .nav-item {
+    justify-content: center;
+}
+
+/* SPONSOR */
+.sidebar-footer {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+}
+
+.sponsor-img {
+    width: 60px;
+    border-radius: 50%;
+}
+
+/* HIDE TEXT IN COLLAPSE */
+.sidebar.collapsed .sponsor-text {
+    display: none;
 }
 
 /* MAIN */
@@ -121,16 +145,15 @@ body {
     margin-left: 110px;
 }
 
-/* BIG SCROLL SPACE */
+/* SCROLL SPACE */
 .top-space {
-    height: 900px; /* 👈 more scroll */
+    height: 900px;
 }
 
 /* FEEDBACK */
 .feedback-section {
     display: flex;
     justify-content: center;
-    padding-bottom: 60px;
 }
 
 .feedback-card {
@@ -139,25 +162,24 @@ body {
     color: black;
     padding: 25px;
     border-radius: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
 }
 
 /* INPUT */
 .feedback-card input,
 .feedback-card textarea {
-    padding: 12px;
+    width: 100%;
+    margin-bottom: 12px;
+    padding: 10px;
     border-radius: 10px;
     border: 1px solid #ccc;
 }
 
 .feedback-card button {
-    background: #f9a825;
+    width: 100%;
     padding: 12px;
     border-radius: 10px;
+    background: #f9a825;
     border: none;
-    cursor: pointer;
 }
 
 /* FOOTER */
