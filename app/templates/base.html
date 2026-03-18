@@ -69,7 +69,7 @@
 
 </header>
 
-
+<!-- SIDEBAR -->
 <aside id="sidebar" class="sidebar">
 
     <nav>
@@ -104,7 +104,7 @@
         </a>
     </nav>
 
-    <!-- FIXED SPONSOR -->
+    <!-- SPONSOR -->
     <div class="sidebar-footer">
         <img src="/static/assets/sponsor.png" alt="Sponsor">
 
@@ -118,9 +118,36 @@
 
 </aside>
 
-
+<!-- MAIN -->
 <main class="main">
+
     {% block content %}{% endblock %}
+
+    <!-- SCROLL SPACE -->
+    <div class="top-space"></div>
+
+    <!-- FEEDBACK -->
+    <div class="feedback-section">
+
+        <form action="/submit-feedback" method="post" class="feedback-card">
+
+            <h2>Get Feedback</h2>
+
+            <input type="text" name="name" placeholder="Name *" required>
+
+            <input type="email" name="email" placeholder="Email ID *" required>
+
+            <input type="text" name="contact" placeholder="Phone Number *" required>
+
+            <textarea name="message" minlength="30"
+                placeholder="Your Feedback (min 30 characters)" required></textarea>
+
+            <button type="submit">Submit →</button>
+
+        </form>
+
+    </div>
+
 </main>
 
 <footer class="footer">
@@ -144,7 +171,6 @@
         document.getElementById("bellMenu").classList.toggle("show");
     };
 
-    // CLOSE DROPDOWN ON OUTSIDE CLICK
     document.addEventListener("click", function(e){
         if(!e.target.closest(".avatar")){
             document.getElementById("avatarMenu").classList.remove("show");
