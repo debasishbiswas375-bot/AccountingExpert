@@ -1,8 +1,3 @@
-<script>
-function isLoggedIn(){
-    return document.cookie.includes("user=");
-}
-</script>
 <!-- ONLY SHOWING CHANGED PARTS CLEANLY -->
 
 <!-- 🔁 CHANGE FORM -->
@@ -41,6 +36,13 @@ function isLoggedIn(){
             document.getElementById("bellMenu").classList.remove("show");
         }
     });
+    <span id="userStatus">Guest</span>
+
+<script>
+if(document.cookie.includes("user=")){
+    document.getElementById("userStatus").innerText = "Logged";
+}
+</script>
 
     /* 🔥 FEEDBACK AJAX */
     const form = document.getElementById("feedbackForm");
