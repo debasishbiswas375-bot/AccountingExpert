@@ -1,13 +1,6 @@
-.guest-blur {
-    filter: blur(3px);
-    pointer-events: none;
-}
-from supabase import create_client
-import os
 from fastapi import FastAPI, Request, UploadFile, File, Form
-from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, StreamingResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-import pandas as pd
 import io, json
 
 from app.database import supabase
@@ -18,14 +11,88 @@ from app.tools.preview import calculate_cost, get_preview
 app = FastAPI()
 templates = Jinja2Templates(directory="app/templates")
 
-# Temporary storage (per user session)
+# Temporary storage per user
 TEMP_STORAGE = {}
 
+# =========================
+# 🏠 LANDING PAGE
+# =========================
 @app.get("/")
 def landing(request: Request):
     return templates.TemplateResponse("landing.html", {"request": request})
+
+
 # =========================
-# 🧩 WORKSPACE PAGE
+# 🔐 AUTH PAGE (UI)
+# =========================
+@app.get("/auth")
+def auth_page(request: Request):
+    return templates.TemplateResponse("auth.html", {"request": request})
+
+
+# =========================
+# 🔑 LOGIN (SET COOKIE)
+# =========================
+@app.post("/login")
+async def login(email: str = Form(...), password: str = Form(...)):
+    try:
+        supabase.auth.sign_in_with_password({
+            "email": email,
+            "password": password
+        })
+
+        response = RedirectResponse(url="/workspace", status_code=302)
+        response.set_cookie(key="user", value=email)
+
+        return response
+
+    except:
+        return {"error": "Invalid credentials"}
+
+
+# =========================
+# 📝 REGISTER
+# =========================
+@app.post("/register")
+async def register(
+    username: str = Form(...),
+    email: str = Form(...),
+    password: str = Form(...)
+):
+    try:
+        res = supabase.auth.sign_up({
+            "email": email,
+            "password": password
+        })
+
+        user_id = res.user.id
+
+        supabase.table("users").insert({
+            "id": user_id,
+            "username": username,
+            "credits": 10,
+            "plan": "Free"
+        }).execute()
+
+        return {"status": "success"}
+
+    except Exception as e:
+        print(e)
+        return {"error": "Registration failed"}
+
+
+# =========================
+# 🚪 LOGOUT
+# =========================
+@app.get("/logout")
+def logout():
+    response = RedirectResponse(url="/")
+    response.delete_cookie("user")
+    return response
+
+
+# =========================
+# 🧩 WORKSPACE
 # =========================
 @app.get("/workspace", response_class=HTMLResponse)
 async def workspace(request: Request):
@@ -39,20 +106,16 @@ async def workspace(request: Request):
 async def convert_file(request: Request, file: UploadFile = File(...)):
 
     content = await file.read()
-
-    # Normalize file
     df = smart_map_bank(content, file.filename)
 
-    user_id = "demo_user"  # TODO: replace with auth system
+    user_id = request.cookies.get("user") or "guest_user"
 
-    # Assign ledgers
     df["ledger_name"] = df.apply(
         lambda row: assign_ledger(row, user_id), axis=1
     )
 
     total, cost = calculate_cost(df)
 
-    # Store temporarily
     TEMP_STORAGE[user_id] = df
 
     preview = get_preview(df)
@@ -67,7 +130,7 @@ async def convert_file(request: Request, file: UploadFile = File(...)):
 
 
 # =========================
-# 📥 FINAL CONVERT + DOWNLOAD
+# 📥 FINAL CONVERT
 # =========================
 @app.post("/workspace/final-convert")
 async def final_convert(
@@ -75,14 +138,18 @@ async def final_convert(
     filename: str = Form(...),
     changes: str = Form(...)
 ):
-    user_id = "demo_user"
+
+    user_id = request.cookies.get("user")
+
+    # 🔐 BLOCK GUEST
+    if not user_id:
+        return RedirectResponse(url="/auth", status_code=302)
 
     df = TEMP_STORAGE.get(user_id)
 
     if df is None:
-        return {"error": "Session expired. Please upload again."}
+        return {"error": "Session expired"}
 
-    # Apply user changes
     changes = json.loads(changes)
 
     for idx, new_ledger in changes.items():
@@ -91,7 +158,7 @@ async def final_convert(
 
         df.at[idx, "ledger_name"] = new_ledger
 
-        # 🔥 LEARNING (always for now except forced default logic)
+        # AI learning
         learn_pattern(user_id, old_desc, new_ledger)
 
     total, cost = calculate_cost(df)
@@ -110,13 +177,13 @@ async def final_convert(
     if user["credits"] < cost:
         return {"error": "Not enough credits"}
 
-    # Deduct credits
+    # Deduct
     supabase.table("users").update({
         "credits": user["credits"] - cost
     }).eq("id", user_id).execute()
 
     # =========================
-    # 📄 XML GENERATION
+    # 📄 XML GENERATE
     # =========================
     xml_data = "<VOUCHERS>\n"
 
@@ -142,9 +209,7 @@ async def final_convert(
         "xml_data": xml_data
     }).execute()
 
-    # =========================
-    # 🔥 KEEP ONLY LAST 3 DOWNLOADABLE
-    # =========================
+    # Keep last 3 downloadable
     history = supabase.table("conversion_history") \
         .select("*") \
         .eq("user_id", user_id) \
@@ -152,15 +217,11 @@ async def final_convert(
         .execute()
 
     if len(history.data) > 3:
-        old_ids = [item["id"] for item in history.data[3:]]
-        for oid in old_ids:
+        for item in history.data[3:]:
             supabase.table("conversion_history").update({
                 "xml_data": None
-            }).eq("id", oid).execute()
+            }).eq("id", item["id"]).execute()
 
-    # =========================
-    # 📤 RETURN FILE
-    # =========================
     return StreamingResponse(
         io.BytesIO(xml_data.encode()),
         media_type="application/xml",
@@ -171,7 +232,7 @@ async def final_convert(
 
 
 # =========================
-# 📝 FEEDBACK SYSTEM
+# 📝 FEEDBACK
 # =========================
 @app.post("/submit-feedback")
 async def submit_feedback(
