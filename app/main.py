@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request, UploadFile, File, Form
 from fastapi.responses import HTMLResponse, StreamingResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import io, json
 
@@ -9,6 +10,9 @@ from app.tools.engine import assign_ledger, learn_pattern
 from app.tools.preview import calculate_cost, get_preview
 
 app = FastAPI()
+
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
 templates = Jinja2Templates(directory="app/templates")
 
 # Temporary storage per user
