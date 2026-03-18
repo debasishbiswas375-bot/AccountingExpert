@@ -14,9 +14,25 @@ def show_conversion_history(request: Request):
         return {"error": "Database not connected"}
     
     # Pull history ordered by most recent first
-    res = supabase.table("conversion_history").select("*").order("created_at", desc=True).execute()
-    
+user = request.cookies.get("user")
+
+if not user:
     return user_templates.TemplateResponse(
-        "history.html", 
-        {"request": request, "history": res.data}
+        "history.html",
+        {
+            "request": request,
+            "history": [],
+            "guest": True
+        }
     )
+
+res = supabase.table("conversion_history").select("*").execute()
+
+return user_templates.TemplateResponse(
+    "history.html",
+    {
+        "request": request,
+        "history": res.data,
+        "guest": False
+    }
+)
