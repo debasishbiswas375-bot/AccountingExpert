@@ -25,51 +25,34 @@
         <div class="brand-box">
             <div class="brand">Accountesy</div>
             <div class="tagline">
-                Learn Smart, Grow Fast, Be Accounting Expert with Accountesy
+                Learn Smart, Grow Fast
             </div>
         </div>
 
         <div class="user-plan">
-            <span>
-                {% if user and user.username %}{{ user.username }}{% else %}Guest{% endif %}
-            </span>
+            <span>{{ user.username if user else "Guest" }}</span>
             •
-            <span>
-                {% if user and user.plans and user.plans.name %}
-                    {{ user.plans.name }}
-                {% else %}
-                    Free
-                {% endif %}
-            </span>
+            <span>{{ user.plans.name if user else "Free" }}</span>
         </div>
 
     </div>
 
     <div class="header-right">
 
-        <!-- NOTIFICATION -->
         <div class="icon-bell" id="bellBtn">
             <i data-feather="bell"></i>
-
-            {% if notifications and notifications|length > 0 %}
-                <span class="dot"></span>
-            {% endif %}
+            <span class="dot"></span>
 
             <div class="dropdown" id="bellMenu">
                 <p>No notifications</p>
             </div>
         </div>
 
-        <!-- AVATAR -->
         <div class="avatar" id="avatarBtn">
-            {% if user and user.username %}
-                {{ user.username[0]|upper }}
-            {% else %}
-                G
-            {% endif %}
+            {{ user.username[0]|upper if user else "G" }}
 
             <div class="dropdown" id="avatarMenu">
-                <p>Account</p>
+                <p>Profile</p>
                 <p>Logout</p>
             </div>
         </div>
@@ -78,8 +61,6 @@
 
 </header>
 
-
-<!-- SIDEBAR -->
 <aside id="sidebar" class="sidebar">
 
     <nav>
@@ -90,7 +71,7 @@
 
         <a href="/help" class="nav-item">
             <i data-feather="help-circle"></i>
-            <span>Help & Features</span>
+            <span>Help</span>
         </a>
 
         <a href="/workspace" class="nav-item">
@@ -103,36 +84,17 @@
             <span>History</span>
         </a>
 
-        <a href="#" class="nav-item">
-            <i data-feather="zap"></i>
-            <span>Coming Soon</span>
-        </a>
-
         <a href="/account" class="nav-item">
             <i data-feather="user"></i>
             <span>Account</span>
         </a>
     </nav>
 
-    <!-- SPONSOR -->
-    <div class="sidebar-footer">
-        <img src="/static/assets/sponsor.png" alt="Sponsor">
-
-        <div class="sponsor-title">Sponsored by</div>
-
-        <div class="sponsor-name">
-            Uday Mondal
-            <span>Tax Consultant Advocate</span>
-        </div>
-    </div>
-
 </aside>
-
 
 <main class="main">
     {% block content %}{% endblock %}
 </main>
-
 
 <footer class="footer">
     <div class="footer-bubble">
@@ -140,37 +102,33 @@
     </div>
 </footer>
 
-
 <script>
-    feather.replace();
+    feather.replace({ 'stroke-width': 1.5 });
 
     const sidebar = document.getElementById("sidebar");
 
     document.getElementById("menuToggle").onclick = () => {
         sidebar.classList.toggle("collapsed");
+        sidebar.classList.toggle("active");
     };
 
-    const avatarBtn = document.getElementById("avatarBtn");
-    const avatarMenu = document.getElementById("avatarMenu");
-
-    const bellBtn = document.getElementById("bellBtn");
-    const bellMenu = document.getElementById("bellMenu");
-
-    avatarBtn.onclick = (e) => {
+    document.getElementById("avatarBtn").onclick = (e) => {
         e.stopPropagation();
-        avatarMenu.classList.toggle("show");
-        bellMenu.classList.remove("show");
+        document.getElementById("avatarMenu").classList.toggle("show");
     };
 
-    bellBtn.onclick = (e) => {
+    document.getElementById("bellBtn").onclick = (e) => {
         e.stopPropagation();
-        bellMenu.classList.toggle("show");
-        avatarMenu.classList.remove("show");
+        document.getElementById("bellMenu").classList.toggle("show");
     };
 
-    document.addEventListener("click", () => {
-        avatarMenu.classList.remove("show");
-        bellMenu.classList.remove("show");
+    document.addEventListener("click", function(e){
+        if(!e.target.closest("#avatarBtn")){
+            document.getElementById("avatarMenu").classList.remove("show");
+        }
+        if(!e.target.closest("#bellBtn")){
+            document.getElementById("bellMenu").classList.remove("show");
+        }
     });
 </script>
 
