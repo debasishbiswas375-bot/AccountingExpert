@@ -24,7 +24,7 @@
 
         <div class="brand-box">
             <div class="brand">Accountesy</div>
-            <div class="tagline">Learn Smart, Grow Fast</div>
+            <div class="tagline">Learn Smart, Grow Fast, Be Accounting Expert with Accountesy</div>
         </div>
 
         <div class="user-plan">
@@ -36,6 +36,9 @@
     </div>
 
     <div class="header-right">
+
+        <!-- DARK MODE -->
+        <div class="theme-toggle" id="themeToggle">🌙</div>
 
         <!-- NOTIFICATION -->
         <div class="icon-bell" id="bellBtn">
@@ -103,7 +106,7 @@
 
     <!-- SPONSOR -->
     <div class="sidebar-footer">
-        <img src="/static/assets/sponsor.png" alt="Sponsor">
+        <img src="/static/assets/sponsor.png">
         <div class="sponsor-title">Sponsored by</div>
         <div class="sponsor-name">
             Uday Mondal
@@ -115,7 +118,35 @@
 
 <!-- MAIN -->
 <main class="main">
-    {% block content %}{% endblock %}
+
+    <!-- DASHBOARD -->
+    <div class="dashboard">
+
+        <!-- CARDS -->
+        <div class="cards">
+            <div class="card">
+                <h3>Users</h3>
+                <p>{{ stats.total_users if stats else 120 }}</p>
+            </div>
+
+            <div class="card">
+                <h3>Revenue</h3>
+                <p>₹{{ stats.revenue if stats else 2300 }}</p>
+            </div>
+
+            <div class="card">
+                <h3>Growth</h3>
+                <p>+{{ stats.growth if stats else 18 }}%</p>
+            </div>
+        </div>
+
+        <!-- CHART -->
+        <div class="chart-box">
+            <canvas id="chart"></canvas>
+        </div>
+
+    </div>
+
 </main>
 
 <!-- FOOTER -->
@@ -153,6 +184,35 @@
             document.getElementById("bellMenu").classList.remove("show");
         }
     });
+
+    // DARK MODE
+    const toggle = document.getElementById("themeToggle");
+
+    toggle.onclick = () => {
+        document.body.classList.toggle("dark");
+        toggle.textContent =
+            document.body.classList.contains("dark") ? "☀️" : "🌙";
+    };
+
+    // SIMPLE CHART
+    const ctx = document.getElementById("chart");
+
+    if (ctx) {
+        const c = ctx.getContext("2d");
+
+        const data = [30, 50, 40, 70, 60];
+
+        c.beginPath();
+        c.moveTo(10, 100);
+
+        data.forEach((v, i) => {
+            c.lineTo(i * 60 + 20, 120 - v);
+        });
+
+        c.strokeStyle = "#00c6ff";
+        c.lineWidth = 3;
+        c.stroke();
+    }
 </script>
 
 </body>
