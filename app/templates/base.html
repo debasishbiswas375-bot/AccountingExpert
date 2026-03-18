@@ -12,7 +12,9 @@
 <body>
 
 <header class="header">
+
     <div class="header-left">
+
         <button id="menuToggle" class="menu-toggle">
             <span></span>
             <span></span>
@@ -24,11 +26,18 @@
             <div class="brand">Accountesy</div>
             <div class="tagline">Learn Smart, Grow Fast</div>
         </div>
+
+        <!-- USER PLAN -->
+        <div class="user-plan">
+            <span>{{ user.username if user else "Guest" }}</span>
+            •
+            <span>{{ user.plans.name if user else "Free" }}</span>
+        </div>
+
     </div>
 
     <div class="header-right">
 
-        <!-- NOTIFICATION -->
         <div class="icon-bell" id="bellBtn">
             <i data-feather="bell"></i>
 
@@ -47,7 +56,6 @@
             </div>
         </div>
 
-        <!-- AVATAR -->
         <div class="avatar" id="avatarBtn">
             {{ user.username[0]|upper if user else "G" }}
 
@@ -59,17 +67,40 @@
         </div>
 
     </div>
+
 </header>
 
 <!-- SIDEBAR -->
 <aside id="sidebar" class="sidebar">
+
     <nav>
         <a href="/" class="nav-item active">
             <i data-feather="home"></i>
-            <span>Home</span>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="/help" class="nav-item">
+            <i data-feather="help-circle"></i>
+            <span>Help & Features</span>
+        </a>
+
+        <a href="/workspace" class="nav-item">
+            <i data-feather="briefcase"></i>
+            <span>Workspace</span>
+        </a>
+
+        <a href="/history" class="nav-item">
+            <i data-feather="clock"></i>
+            <span>History</span>
+        </a>
+
+        <a href="/account" class="nav-item">
+            <i data-feather="user"></i>
+            <span>Account</span>
         </a>
     </nav>
 
+    <!-- SPONSOR -->
     <div class="sidebar-footer">
         <img src="/static/assets/sponsor.png">
         <div class="sponsor-title">Sponsored by</div>
@@ -78,16 +109,17 @@
             <span>Tax Consultant Advocate</span>
         </div>
     </div>
+
 </aside>
 
 <!-- MAIN -->
 <main class="main">
 
-    <div class="feedback-container">
+    <div class="feedback-wrapper">
 
-        <h2>Feedback Form</h2>
+        <form action="/submit-feedback" method="post" class="feedback-card">
 
-        <form action="/submit-feedback" method="post">
+            <h2>Feedback Form</h2>
 
             <input type="text" name="name" placeholder="Your Name" required>
 
