@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Accountesy</title>
 
-    <link rel="icon" href="/static/assets/logo.png">
     <link rel="stylesheet" href="/static/css/main.css">
     <script src="https://unpkg.com/feather-icons"></script>
 </head>
@@ -21,7 +20,7 @@
 
         <div class="brand-box">
             <div class="brand">Accountesy</div>
-            <div class="tagline">Learn Smart, Grow Fast, Be Accounting Expert with Accountesy</div>
+            <div class="tagline">Learn Smart, Grow Fast</div>
         </div>
 
         <div class="user-plan">
@@ -32,10 +31,7 @@
 
     <div class="header-right">
         <i data-feather="bell"></i>
-
-        <div class="avatar">
-            {{ user.username[0]|upper if user else "G" }}
-        </div>
+        <div class="avatar">{{ user.username[0]|upper if user else "G" }}</div>
     </div>
 
 </header>
@@ -50,7 +46,7 @@
             <span>Dashboard</span>
         </a>
 
-        <a href="/help" class="nav-item" data-label="Help">
+        <a href="/help" class="nav-item" data-label="Help & Features">
             <i data-feather="help-circle"></i>
             <span>Help & Features</span>
         </a>
@@ -86,7 +82,7 @@
 <!-- MAIN -->
 <main id="main" class="main">
 
-    <!-- SPACE -->
+    <!-- BIG SPACE → FORCE SCROLL -->
     <div class="top-space"></div>
 
     <!-- FEEDBACK -->
@@ -97,9 +93,7 @@
             <h2>Get Feedback</h2>
 
             <input type="text" name="name" placeholder="Name *" required>
-
             <input type="email" name="email" placeholder="Email ID *" required>
-
             <input type="text" name="contact" placeholder="Phone Number *" required>
 
             <textarea name="message" placeholder="Your Feedback (min 30 characters)" minlength="30" required></textarea>
@@ -123,22 +117,10 @@ const toggle = document.getElementById("menuToggle");
 const sidebar = document.getElementById("sidebar");
 const main = document.getElementById("main");
 
-// CLICK TO TOGGLE
 toggle.onclick = () => {
     sidebar.classList.toggle("collapsed");
     main.classList.toggle("expanded");
 };
-
-// HOVER EXPAND (SMART)
-sidebar.addEventListener("mouseenter", () => {
-    if (sidebar.classList.contains("collapsed")) {
-        sidebar.classList.add("hover-expand");
-    }
-});
-
-sidebar.addEventListener("mouseleave", () => {
-    sidebar.classList.remove("hover-expand");
-});
 </script>
 
 </body>
