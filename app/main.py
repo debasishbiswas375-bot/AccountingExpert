@@ -21,7 +21,9 @@ templates = Jinja2Templates(directory="app/templates")
 # Temporary storage (per user session)
 TEMP_STORAGE = {}
 
-
+@app.get("/")
+def landing(request: Request):
+    return templates.TemplateResponse("landing.html", {"request": request})
 # =========================
 # 🧩 WORKSPACE PAGE
 # =========================
