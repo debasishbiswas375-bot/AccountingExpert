@@ -34,14 +34,23 @@ body {
     height: 50px;
 }
 
+/* USER PLAN */
+.user-plan {
+    background: rgba(255,255,255,0.6);
+    color: black;
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-left: 10px;
+}
+
 /* SIDEBAR */
 .sidebar {
     position: fixed;
     top: 64px;
     left: 20px;
-    width: 220px;
+    width: 240px;
     height: calc(100% - 64px);
-    padding: 20px;
+    padding: 25px;
     border-radius: 20px;
     background: rgba(255,255,255,0.2);
     backdrop-filter: blur(20px);
@@ -51,42 +60,64 @@ body {
     display: flex;
     gap: 10px;
     padding: 12px;
+    border-radius: 12px;
     color: white;
     text-decoration: none;
 }
 
+.nav-item.active {
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+}
+
 /* MAIN */
 .main {
-    margin-left: 260px;
+    margin-left: 270px;
     margin-top: 80px;
-    padding: 20px;
+    height: calc(100vh - 80px);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-/* FEEDBACK */
-.feedback-container {
-    max-width: 500px;
-    margin: auto;
-    background: rgba(255,255,255,0.2);
+/* FEEDBACK CENTER */
+.feedback-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+/* CARD STYLE FORM */
+.feedback-card {
+    width: 400px;
     padding: 25px;
     border-radius: 20px;
-    backdrop-filter: blur(10px);
+
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(12px);
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-.feedback-container h2 {
-    margin-bottom: 15px;
+.feedback-card h2 {
+    text-align: center;
+    margin-bottom: 10px;
 }
 
-.feedback-container input,
-.feedback-container textarea {
-    width: 100%;
-    margin-bottom: 12px;
+.feedback-card input,
+.feedback-card textarea {
     padding: 10px;
     border-radius: 10px;
     border: none;
 }
 
-.feedback-container button {
-    width: 100%;
+.feedback-card textarea {
+    min-height: 100px;
+}
+
+.feedback-card button {
     padding: 10px;
     border-radius: 10px;
     border: none;
@@ -101,4 +132,19 @@ body {
     bottom: 10px;
     width: 100%;
     text-align: center;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+    .sidebar {
+        left: -260px;
+    }
+
+    .sidebar.active {
+        left: 10px;
+    }
+
+    .main {
+        margin-left: 0;
+    }
 }
