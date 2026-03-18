@@ -34,13 +34,11 @@ body {
     height: 50px;
 }
 
-/* USER PLAN */
 .user-plan {
     background: rgba(255,255,255,0.6);
     color: black;
     padding: 5px 12px;
     border-radius: 20px;
-    margin-left: 10px;
 }
 
 /* SIDEBAR */
@@ -57,12 +55,11 @@ body {
 }
 
 .nav-item {
-    display: flex;
-    gap: 10px;
+    display: block;
     padding: 12px;
-    border-radius: 12px;
     color: white;
     text-decoration: none;
+    border-radius: 10px;
 }
 
 .nav-item.active {
@@ -73,56 +70,60 @@ body {
 .main {
     margin-left: 270px;
     margin-top: 80px;
-    height: calc(100vh - 80px);
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    padding: 20px;
 }
 
-/* FEEDBACK CENTER */
-.feedback-wrapper {
-    width: 100%;
-    display: flex;
-    justify-content: center;
+/* SPACE TO FORCE SCROLL */
+.top-space {
+    height: 500px;
 }
 
-/* CARD STYLE FORM */
+/* FEEDBACK SECTION */
+.feedback-section {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 60px;
+}
+
+/* CARD STYLE */
 .feedback-card {
-    width: 400px;
+    width: 420px;
+    background: #f4f4f4;
+    color: black;
     padding: 25px;
-    border-radius: 20px;
-
-    background: rgba(255,255,255,0.2);
-    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 15px;
 }
 
 .feedback-card h2 {
     text-align: center;
-    margin-bottom: 10px;
 }
 
+/* INPUTS */
 .feedback-card input,
 .feedback-card textarea {
-    padding: 10px;
+    padding: 12px;
     border-radius: 10px;
-    border: none;
+    border: 1px solid #ccc;
+    font-size: 14px;
 }
 
 .feedback-card textarea {
     min-height: 100px;
 }
 
+/* BUTTON */
 .feedback-card button {
-    padding: 10px;
+    background: #f9a825;
+    color: black;
+    padding: 12px;
     border-radius: 10px;
     border: none;
-    background: #0072ff;
-    color: white;
+    font-weight: bold;
     cursor: pointer;
 }
 
@@ -138,10 +139,6 @@ body {
 @media (max-width: 768px) {
     .sidebar {
         left: -260px;
-    }
-
-    .sidebar.active {
-        left: 10px;
     }
 
     .main {
