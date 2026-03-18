@@ -14,47 +14,62 @@
 <header class="header">
 
     <div class="header-left">
-        <button id="menuToggle" class="menu-toggle">
-            <span></span>
-            <span></span>
-        </button>
+
+        <button id="menuToggle" class="menu-toggle">☰</button>
 
         <img src="/static/assets/logo.png" class="logo">
 
         <div class="brand-box">
             <div class="brand">Accountesy</div>
-            <div class="tagline">Learn Smart, Grow Fast</div>
+            <div class="tagline">Learn Smart, Grow Fast, Be Accounting Expert with Accountesy</div>
         </div>
 
         <div class="user-plan">
-            <span>{{ user.username if user else "Guest" }}</span>
-            •
-            <span>{{ user.plans.name if user else "Free" }}</span>
+            {{ user.username if user else "Guest" }} • {{ user.plans.name if user else "Free" }}
         </div>
+
     </div>
 
     <div class="header-right">
-
-        <div class="icon-bell">
-            <i data-feather="bell"></i>
-        </div>
+        <i data-feather="bell"></i>
 
         <div class="avatar">
             {{ user.username[0]|upper if user else "G" }}
         </div>
-
     </div>
 
 </header>
 
 <!-- SIDEBAR -->
-<aside class="sidebar">
+<aside id="sidebar" class="sidebar">
+
     <nav>
-        <a href="/" class="nav-item active"><i data-feather="home"></i> Dashboard</a>
-        <a href="/help" class="nav-item"><i data-feather="help-circle"></i> Help & Features</a>
-        <a href="/workspace" class="nav-item"><i data-feather="briefcase"></i> Workspace</a>
-        <a href="/history" class="nav-item"><i data-feather="clock"></i> History</a>
-        <a href="/account" class="nav-item"><i data-feather="user"></i> Account</a>
+
+        <a href="/" class="nav-item active" data-label="Dashboard">
+            <i data-feather="home"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="/help" class="nav-item" data-label="Help">
+            <i data-feather="help-circle"></i>
+            <span>Help & Features</span>
+        </a>
+
+        <a href="/workspace" class="nav-item" data-label="Workspace">
+            <i data-feather="briefcase"></i>
+            <span>Workspace</span>
+        </a>
+
+        <a href="/history" class="nav-item" data-label="History">
+            <i data-feather="clock"></i>
+            <span>History</span>
+        </a>
+
+        <a href="/account" class="nav-item" data-label="Account">
+            <i data-feather="user"></i>
+            <span>Account</span>
+        </a>
+
     </nav>
 
     <div class="sidebar-footer">
@@ -65,15 +80,16 @@
             <span>Tax Consultant Advocate</span>
         </div>
     </div>
+
 </aside>
 
 <!-- MAIN -->
-<main class="main">
+<main id="main" class="main">
 
-    <!-- TOP SPACE (so user scrolls) -->
+    <!-- SPACE -->
     <div class="top-space"></div>
 
-    <!-- FEEDBACK FORM (BOTTOM) -->
+    <!-- FEEDBACK -->
     <div class="feedback-section">
 
         <form action="/submit-feedback" method="post" class="feedback-card">
@@ -97,13 +113,32 @@
 </main>
 
 <footer class="footer">
-    <div class="footer-bubble">
-        Created by <b>Debasish Biswas</b> © 2026
-    </div>
+    Created by <b>Debasish Biswas</b> © 2026
 </footer>
 
 <script>
-    feather.replace();
+feather.replace();
+
+const toggle = document.getElementById("menuToggle");
+const sidebar = document.getElementById("sidebar");
+const main = document.getElementById("main");
+
+// CLICK TO TOGGLE
+toggle.onclick = () => {
+    sidebar.classList.toggle("collapsed");
+    main.classList.toggle("expanded");
+};
+
+// HOVER EXPAND (SMART)
+sidebar.addEventListener("mouseenter", () => {
+    if (sidebar.classList.contains("collapsed")) {
+        sidebar.classList.add("hover-expand");
+    }
+});
+
+sidebar.addEventListener("mouseleave", () => {
+    sidebar.classList.remove("hover-expand");
+});
 </script>
 
 </body>
