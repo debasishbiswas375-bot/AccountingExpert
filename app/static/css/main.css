@@ -41,6 +41,15 @@ body {
     border-radius: 20px;
 }
 
+/* TOGGLE */
+.menu-toggle {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    padding: 8px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
 /* SIDEBAR */
 .sidebar {
     position: fixed;
@@ -52,18 +61,56 @@ body {
     border-radius: 20px;
     background: rgba(255,255,255,0.2);
     backdrop-filter: blur(20px);
+    transition: 0.3s;
 }
 
+/* COLLAPSE */
+.sidebar.collapsed {
+    width: 80px;
+}
+
+/* HOVER EXPAND */
+.sidebar.collapsed.hover-expand {
+    width: 240px;
+}
+
+/* NAV */
 .nav-item {
-    display: block;
+    display: flex;
+    gap: 12px;
     padding: 12px;
+    border-radius: 10px;
     color: white;
     text-decoration: none;
-    border-radius: 10px;
+    position: relative;
 }
 
-.nav-item.active {
-    background: linear-gradient(135deg, #00c6ff, #0072ff);
+/* HIDE TEXT */
+.sidebar.collapsed .nav-item span {
+    display: none;
+}
+
+/* SHOW TEXT ON HOVER */
+.sidebar.collapsed.hover-expand .nav-item span {
+    display: inline;
+}
+
+/* TOOLTIP */
+.sidebar.collapsed .nav-item::after {
+    content: attr(data-label);
+    position: absolute;
+    left: 70px;
+    background: black;
+    padding: 5px 8px;
+    border-radius: 6px;
+    opacity: 0;
+    pointer-events: none;
+    white-space: nowrap;
+    font-size: 12px;
+}
+
+.sidebar.collapsed .nav-item:hover::after {
+    opacity: 1;
 }
 
 /* MAIN */
@@ -71,59 +118,48 @@ body {
     margin-left: 270px;
     margin-top: 80px;
     padding: 20px;
+    transition: 0.3s;
 }
 
-/* SPACE TO FORCE SCROLL */
+.main.expanded {
+    margin-left: 110px;
+}
+
+/* SPACE */
 .top-space {
     height: 500px;
 }
 
-/* FEEDBACK SECTION */
+/* FEEDBACK */
 .feedback-section {
     display: flex;
     justify-content: center;
     padding-bottom: 60px;
 }
 
-/* CARD STYLE */
 .feedback-card {
     width: 420px;
     background: #f4f4f4;
     color: black;
     padding: 25px;
     border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
-.feedback-card h2 {
-    text-align: center;
-}
-
-/* INPUTS */
 .feedback-card input,
 .feedback-card textarea {
     padding: 12px;
     border-radius: 10px;
     border: 1px solid #ccc;
-    font-size: 14px;
 }
 
-.feedback-card textarea {
-    min-height: 100px;
-}
-
-/* BUTTON */
 .feedback-card button {
     background: #f9a825;
-    color: black;
     padding: 12px;
     border-radius: 10px;
     border: none;
-    font-weight: bold;
     cursor: pointer;
 }
 
@@ -133,15 +169,4 @@ body {
     bottom: 10px;
     width: 100%;
     text-align: center;
-}
-
-/* MOBILE */
-@media (max-width: 768px) {
-    .sidebar {
-        left: -260px;
-    }
-
-    .main {
-        margin-left: 0;
-    }
 }
