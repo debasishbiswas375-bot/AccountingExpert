@@ -340,8 +340,10 @@ body::before {
 /* APPLY SAME BACKGROUND AS SIDEBAR ONLY */
 .main {
     margin-left: 260px;
-    padding: 40px;
+    padding: 100px 40px 40px;
     min-height: 100vh;
 
-    background: transparent;
+    backdrop-filter: blur(18px);
+    background: rgba(255,255,255,0.18);
+    border-radius: 20px;
 }
