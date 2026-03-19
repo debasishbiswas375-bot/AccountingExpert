@@ -1,21 +1,18 @@
-from flask import Blueprint, render_template, request, send_file, session
+from flask import Blueprint, render_template, request, send_file
 import os
 import pandas as pd
 
-# ENGINE
-from tools.pdf_to_excel_engine import process_pdf_to_excel
+# ✅ USE MAIN ENGINE (NOT FREE ENGINE)
+from app.tools.engine import process_pdf_to_excel
 
 workspace_bp = Blueprint('workspace', __name__)
 
 UPLOAD_FOLDER = "uploads"
-
-# Create upload folder if not exists
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 
 # =========================================
-# 🏠 MAIN WORKSPACE PAGE (UNCHANGED)
+# 🏠 WORKSPACE PAGE
 # =========================================
 @workspace_bp.route("/workspace")
 def workspace_page():
@@ -23,7 +20,7 @@ def workspace_page():
 
 
 # =========================================
-# 🔹 PDF → EXCEL
+# 🔹 PDF → EXCEL (PRO ENGINE)
 # =========================================
 @workspace_bp.route("/convert-excel", methods=["POST"])
 def convert_excel():
@@ -49,7 +46,7 @@ def convert_excel():
 
 
 # =========================================
-# 🔹 XML GENERATOR FUNCTION
+# 🔹 XML GENERATOR
 # =========================================
 def generate_xml(df, output_path):
     xml = """<?xml version="1.0"?>
@@ -72,8 +69,8 @@ def generate_xml(df, output_path):
         xml += f"""
 <TALLYMESSAGE>
 <VOUCHER VCHTYPE="{vtype}" ACTION="Create">
-<DATE>{row['Date'].replace('/', '')}</DATE>
-<NARRATION>{row['Description']}</NARRATION>
+<DATE>{str(row.get('Date','')).replace('/', '')}</DATE>
+<NARRATION>{row.get('Description','')}</NARRATION>
 
 <ALLLEDGERENTRIES.LIST>
 <LEDGERNAME>Bank Account</LEDGERNAME>
@@ -100,7 +97,7 @@ def generate_xml(df, output_path):
 
 
 # =========================================
-# 🔹 PDF → XML
+# 🔹 PDF → XML (PRO ENGINE)
 # =========================================
 @workspace_bp.route("/convert-xml", methods=["POST"])
 def convert_xml():
@@ -113,13 +110,9 @@ def convert_xml():
     file.save(file_path)
 
     try:
-        # Step 1 → Convert to Excel
         excel_file = process_pdf_to_excel(file_path)
-
-        # Step 2 → Read Excel
         df = pd.read_excel(excel_file)
 
-        # Step 3 → Generate XML
         output_xml = file_path.replace(".pdf", ".xml")
         generate_xml(df, output_xml)
 
