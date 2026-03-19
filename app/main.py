@@ -272,46 +272,28 @@ async def excel_page(request: Request):
 # =========================
 # 📂 PDF → EXCEL
 # =========================
+from app.tools.free_excel_engine import run_free_engine
+import uuid, os
+
+TEMP_DIR = "app/temp"
+os.makedirs(TEMP_DIR, exist_ok=True)
+
+
 @app.post("/convert-excel")
 async def convert_excel(file: UploadFile = File(...)):
     content = await file.read()
 
-    df = smart_map_bank(content, file.filename)
+    raw_df, processed_df, summary_df = run_free_engine(content, file.filename)
 
-    output_path = f"{file.filename}.xlsx"
-    df.to_excel(output_path, index=False)
+    output_path = os.path.join(TEMP_DIR, f"{uuid.uuid4()}.xlsx")
+
+    with pd.ExcelWriter(output_path, engine="openpyxl") as writer:
+        raw_df.to_excel(writer, sheet_name="Raw Transactions", index=False)
+        processed_df.to_excel(writer, sheet_name="Processed Transactions", index=False)
+        summary_df.to_excel(writer, sheet_name="Summary", index=False)
 
     return FileResponse(
         output_path,
-        filename="converted.xlsx",
+        filename="converted_free.xlsx",
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
-
-
-# =========================
-# 📂 PDF → XML
-# =========================
-@app.post("/convert-xml")
-async def convert_xml(file: UploadFile = File(...)):
-    content = await file.read()
-
-    df = smart_map_bank(content, file.filename)
-
-    xml = "<VOUCHERS>\n"
-
-    for _, row in df.iterrows():
-        xml += f"""
-<VOUCHER>
-    <DATE>{row.get('date','')}</DATE>
-    <NARRATION>{row.get('description','')}</NARRATION>
-    <AMOUNT>{row.get('amount','')}</AMOUNT>
-</VOUCHER>
-"""
-
-    xml += "\n</VOUCHERS>"
-
-    return StreamingResponse(
-        io.BytesIO(xml.encode()),
-        media_type="application/xml",
-        headers={"Content-Disposition": "attachment; filename=converted.xml"}
     )
