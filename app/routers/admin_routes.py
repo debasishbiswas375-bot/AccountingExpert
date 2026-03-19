@@ -1,43 +1,29 @@
-import os
-from fastapi import APIRouter, Request, Form, Depends
+from fastapi import APIRouter, Request
+from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import RedirectResponse
-from app.database import supabase
 
-router = APIRouter(prefix="/admin", tags=["Admin"])
+router = APIRouter(prefix="/admin")
 
-# Pointing to the isolated admin folder
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-admin_templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "admin"))
+templates = Jinja2Templates(directory="app/templates")
 
-@router.get("/login")
-def admin_login_page(request: Request):
-    return admin_templates.TemplateResponse("admin_login.html", {"request": request})
 
-@router.post("/login")
-def process_admin_login(username: str = Form(...), password: str = Form(...)):
-    # Authenticates against Render Environment Variables
-    if username == os.getenv("ADMIN_USERNAME") and password == os.getenv("ADMIN_PASSWORD"):
-        response = RedirectResponse(url="/admin/", status_code=302)
-        # In a real app, you'd set a secure cookie here
-        return response
-    return {"error": "Invalid Admin Credentials"}
-
-@router.get("/")
+# =========================
+# ADMIN PAGE
+# =========================
+@router.get("/", response_class=HTMLResponse)
 def admin_dashboard(request: Request):
-    if not supabase:
-        return {"error": "Database connection failed"}
-    
-    # Fetch all users from Supabase to manage plans
-    res = supabase.table("users").select("*").execute()
-    return admin_templates.TemplateResponse(
-        "admin_dashboard.html", 
-        {"request": request, "users": res.data}
-    )
+    return templates.TemplateResponse("admin.html", {
+        "request": request
+    })
 
-@router.post("/update-user")
-def update_user_plan(user_id: str = Form(...), new_plan: str = Form(...)):
-    if supabase:
-        # Update the specific user's plan in the DB
-        supabase.table("users").update({"plan": new_plan}).eq("id", user_id).execute()
-    return RedirectResponse(url="/admin/", status_code=302)
+
+# =========================
+# ADMIN API
+# =========================
+@router.get("/stats")
+def stats():
+    return {
+        "users": 120,
+        "files_processed": 430,
+        "active_today": 12
+    }
