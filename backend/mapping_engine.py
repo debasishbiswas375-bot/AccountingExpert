@@ -152,3 +152,6 @@ def map_transactions(transactions, ledgers, full_text):
         })
 
     return mapped
+
+def map_transactions(transactions, masters):
+    return process_mapping(transactions, masters)
