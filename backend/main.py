@@ -4,9 +4,9 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
 from backend.parser import parse_statement
-from master_parser import parse_master
-from mapping_engine import map_transactions
-from xml_generator import generate_tally_xml
+from backend.master_parser import parse_master
+from backend.mapping_engine import map_transactions
+from backend.xml_generator import generate_tally_xml
 
 import os
 import shutil
