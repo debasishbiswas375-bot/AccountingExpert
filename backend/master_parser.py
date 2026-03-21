@@ -42,3 +42,6 @@ def parse_master_html(html_content: str):
                 ledgers.add(text)
 
     return list(set(DEFAULT_LEDGERS) | ledgers)
+
+def parse_master(file_path):
+    return parse_master_html(file_path)
