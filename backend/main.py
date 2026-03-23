@@ -1,7 +1,7 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 
 from backend.parser import parse_statement
 from backend.master_parser import parse_master
@@ -31,7 +31,7 @@ UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # ==========================
-# 🔐 SIGNUP
+# 🚀 SIGNUP
 # ==========================
 @app.post("/signup")
 def signup(data: dict):
@@ -66,7 +66,7 @@ def signup(data: dict):
 
 
 # ==========================
-# 🔐 LOGIN
+# 🚀 LOGIN
 # ==========================
 @app.post("/login")
 def login(data: dict):
@@ -103,7 +103,7 @@ def login(data: dict):
 
 
 # ==========================
-# 🔐 TOKEN VALIDATION
+# 🚀 TOKEN VALIDATION
 # ==========================
 def get_current_user(token: str = Header(...)):
     payload = decode_access_token(token)
@@ -113,7 +113,7 @@ def get_current_user(token: str = Header(...)):
 
 
 # ==========================
-# 📄 MAIN PROCESS (PROTECTED)
+# 🚀 MAIN PROCESS (PROTECTED)
 # ==========================
 @app.post("/process")
 async def process(
@@ -147,18 +147,33 @@ async def process(
 
 
 # ==========================
-# 🌐 SERVE FRONTEND (FIXED)
+# 🚀 SERVE FRONTEND (BULLETPROOF FIX)
 # ==========================
 
-# Serve static assets (JS, CSS)
-app.mount("/assets", StaticFiles(directory="dist/assets"), name="assets")
+# 1. Dynamically find the absolute path to the root folder (one level up from backend/)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DIST_DIR = os.path.join(BASE_DIR, "dist")
+ASSETS_DIR = os.path.join(DIST_DIR, "assets")
 
-# Serve React app (root)
-@app.get("/")
-def serve_react():
-    return FileResponse("dist/index.html")
+# 2. Mount the assets folder safely if it exists
+if os.path.exists(ASSETS_DIR):
+    app.mount("/assets", StaticFiles(directory=ASSETS_DIR), name="assets")
 
-# Handle React routes (VERY IMPORTANT)
+# 3. Smart Catch-all route for React (SPA)
 @app.get("/{full_path:path}")
 def serve_react_routes(full_path: str):
-    return FileResponse("dist/index.html")
+    # Check if the exact file exists (e.g., vite.svg, robots.txt)
+    specific_file = os.path.join(DIST_DIR, full_path)
+    if os.path.isfile(specific_file):
+        return FileResponse(specific_file)
+    
+    # Otherwise, fall back to index.html to let React Router handle the URL
+    index_file = os.path.join(DIST_DIR, "index.html")
+    if os.path.isfile(index_file):
+        return FileResponse(index_file)
+        
+    # If we get here, the dist folder doesn't exist on the server
+    return JSONResponse(
+        status_code=404, 
+        content={"error": "Frontend build not found. The 'dist' folder is missing. Ensure 'npm run build' runs during deployment."}
+    )
